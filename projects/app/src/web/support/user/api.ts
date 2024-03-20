@@ -78,3 +78,6 @@ export const getWXLoginQR = () =>
 
 export const getWXLoginResult = (code: string) =>
   GET<ResLogin>(`/proApi/support/user/account/login/wx/getResult`, { code });
+
+export const postUser = (username: string, password: string) =>
+  POST('/support/user/account/addUser', { username: username, password: password });

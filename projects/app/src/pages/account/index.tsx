@@ -12,6 +12,7 @@ import UserInfo from './components/Info';
 import { serviceSideProps } from '@/web/common/utils/i18n';
 import { useTranslation } from 'next-i18next';
 import Script from 'next/script';
+import ManageUser from '@/components/ManageUser';
 
 const Promotion = dynamic(() => import('./components/Promotion'));
 const UsageTable = dynamic(() => import('./components/UsageTable'));
@@ -28,7 +29,8 @@ enum TabEnum {
   'inform' = 'inform',
   'individuation' = 'individuation',
   'apikey' = 'apikey',
-  'loginout' = 'loginout'
+  'loginout' = 'loginout',
+  'manage' = 'manage'
 }
 
 const Account = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
@@ -93,7 +95,11 @@ const Account = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
           }
         ]
       : []),
-
+    {
+      icon: 'support/user/individuation',
+      label: t('user.Manage'),
+      id: TabEnum.manage
+    },
     {
       icon: 'support/account/loginoutLight',
       label: t('user.Sign Out'),
@@ -172,6 +178,7 @@ const Account = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
             {currentTab === TabEnum.individuation && <Individuation />}
             {currentTab === TabEnum.inform && <InformTable />}
             {currentTab === TabEnum.apikey && <ApiKeyTable />}
+            {currentTab === TabEnum.manage && <ManageUser />}
           </Box>
         </Flex>
         <ConfirmModal />

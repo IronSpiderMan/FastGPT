@@ -3,6 +3,13 @@ import { MongoUser } from './schema';
 import { getTmbInfoByTmbId, getUserDefaultTeam } from './team/controller';
 import { ERROR_ENUM } from '@fastgpt/global/common/error/errorCode';
 
+export async function addUser({ username, password }: { username?: string; password?: string }) {
+  const user = MongoUser.findOne({ username: username });
+  console.log('在User的Controller里面');
+  console.log('====================================================');
+  console.log(user);
+}
+
 export async function authUserExist({ userId, username }: { userId?: string; username?: string }) {
   if (userId) {
     return MongoUser.findOne({ _id: userId });

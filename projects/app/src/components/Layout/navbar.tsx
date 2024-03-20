@@ -40,13 +40,13 @@ const Navbar = ({ unread }: { unread: number }) => {
         link: `/app/list`,
         activeLink: ['/app/list', '/app/detail']
       },
-      {
-        label: t('navbar.Plugin'),
-        icon: 'common/navbar/pluginLight',
-        activeIcon: 'common/navbar/pluginFill',
-        link: `/plugin/list`,
-        activeLink: ['/plugin/list', '/plugin/edit']
-      },
+      // {
+      //   label: t('navbar.Plugin'),
+      //   icon: 'common/navbar/pluginLight',
+      //   activeIcon: 'common/navbar/pluginFill',
+      //   link: `/plugin/list`,
+      //   activeLink: ['/plugin/list', '/plugin/edit']
+      // },
       {
         label: t('navbar.Datasets'),
         icon: 'core/dataset/datasetLight',
@@ -163,35 +163,35 @@ const Navbar = ({ unread }: { unread: number }) => {
           </Link>
         </Box>
       )}
-      {(feConfigs?.docUrl || feConfigs?.chatbotUrl) && (
-        <MyTooltip label={t('common.system.Use Helper')} placement={'right-end'}>
-          <Link
-            {...itemStyles}
-            {...hoverStyle}
-            href={feConfigs?.chatbotUrl || getDocPath('/docs/intro')}
-            target="_blank"
-            mb={0}
-            color={'myGray.500'}
-          >
-            <MyIcon name={'common/courseLight'} width={'24px'} height={'24px'} />
-          </Link>
-        </MyTooltip>
-      )}
-      {feConfigs?.show_git && (
-        <MyTooltip label={`Git Star: ${gitStar}`} placement={'right-end'}>
-          <Link
-            as={NextLink}
-            href="https://github.com/labring/FastGPT"
-            target={'_blank'}
-            {...itemStyles}
-            {...hoverStyle}
-            mt={0}
-            color={'myGray.500'}
-          >
-            <MyIcon name={'common/gitInlight'} width={'26px'} height={'26px'} />
-          </Link>
-        </MyTooltip>
-      )}
+      {/*{(feConfigs?.docUrl || feConfigs?.chatbotUrl) && (*/}
+      {/*  <MyTooltip label={t('common.system.Use Helper')} placement={'right-end'}>*/}
+      {/*    <Link*/}
+      {/*      {...itemStyles}*/}
+      {/*      {...hoverStyle}*/}
+      {/*      href={feConfigs?.chatbotUrl || getDocPath('/docs/intro')}*/}
+      {/*      target="_blank"*/}
+      {/*      mb={0}*/}
+      {/*      color={'myGray.500'}*/}
+      {/*    >*/}
+      {/*      <MyIcon name={'common/courseLight'} width={'24px'} height={'24px'} />*/}
+      {/*    </Link>*/}
+      {/*  </MyTooltip>*/}
+      {/*)}*/}
+      {/*{feConfigs?.show_git && (*/}
+      {/*  <MyTooltip label={`Git Star: ${gitStar}`} placement={'right-end'}>*/}
+      {/*    <Link*/}
+      {/*      as={NextLink}*/}
+      {/*      href="https://github.com/labring/FastGPT"*/}
+      {/*      target={'_blank'}*/}
+      {/*      {...itemStyles}*/}
+      {/*      {...hoverStyle}*/}
+      {/*      mt={0}*/}
+      {/*      color={'myGray.500'}*/}
+      {/*    >*/}
+      {/*      <MyIcon name={'common/gitInlight'} width={'26px'} height={'26px'} />*/}
+      {/*    </Link>*/}
+      {/*  </MyTooltip>*/}
+      {/*)}*/}
     </Flex>
   );
 };

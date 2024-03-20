@@ -1393,6 +1393,7 @@
     "Quote Prompt Tip": "该配置只在知识库搜索时生效。\n可以用 {{quote}} 来插入引用内容模板，使用 {{question}} 来插入问题。下面是默认值：\n{{default}}"
   },
   "user": {
+    "Add User": "添加用户",
     "Account": "账号",
     "Amount of earnings": "收益（￥）",
     "Amount of inviter": "累计邀请人数",
