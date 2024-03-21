@@ -1224,6 +1224,7 @@
     },
     "user": {
       "Avatar": "头像",
+      "Manage": "用户管理",
       "Need to login": "请先登录",
       "Price": "计费标准",
       "User self info": "个人信息",

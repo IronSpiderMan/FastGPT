@@ -3,6 +3,7 @@ import { jsonRes } from '@fastgpt/service/common/response';
 import { MongoUser } from '@fastgpt/service/support/user/schema';
 import { connectToDatabase } from '@/service/mongo';
 import type { PostLoginProps } from '@fastgpt/global/support/user/api.d';
+import { hashStr } from '@fastgpt/global/common/string/tools';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -23,8 +24,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     }
 
     const user = await MongoUser.create({
-      username,
-      password
+      username: username,
+      password: hashStr(password)
     });
     jsonRes(res, {
       data: {
