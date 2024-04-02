@@ -5,14 +5,33 @@ import MyInput from '@/components/MyInput';
 import MyPassword from '@/components/MyPassword';
 import React, { useState, useCallback } from 'react';
 import { postUser } from '@/web/support/user/api';
+import { useToast } from '@fastgpt/web/hooks/useToast';
 
 const ManageUser = () => {
   const { t } = useTranslation();
   const [inputValue, setInputValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
+  const { toast } = useToast();
   const onclickAdd = useCallback(async () => {
-    const user = await postUser(inputValue, passwordValue);
-    console.log(user);
+    try {
+      const user = await postUser(inputValue, passwordValue);
+      toast({
+        title: '添加成功',
+        status: 'success'
+      });
+    } catch (err) {
+      console.log(err);
+      toast({
+        title: err.message,
+        status: 'error'
+      });
+    }
+    // const user = await postUser(inputValue, passwordValue);
+    // toast({
+    //   title: '添加成功',
+    //   status: 'success'
+    // });
+    // console.log(user);
   });
   return (
     <Box py={[3, '28px']} px={['5vw', '64px']}>
