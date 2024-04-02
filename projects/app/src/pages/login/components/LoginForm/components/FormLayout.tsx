@@ -82,8 +82,11 @@ const FormLayout = ({ children, setPageType, pageType }: Props) => {
         >
           <Image src={LOGO_ICON} w={'24px'} alt={'icon'} />
         </Flex>
+        {/*<Box ml={3} fontSize={['2xl', '3xl']} fontWeight={'bold'}>*/}
+        {/*  {feConfigs?.systemTitle}*/}
+        {/*</Box>*/}
         <Box ml={3} fontSize={['2xl', '3xl']} fontWeight={'bold'}>
-          {feConfigs?.systemTitle}
+          知识库问答系统
         </Box>
       </Flex>
       {children}

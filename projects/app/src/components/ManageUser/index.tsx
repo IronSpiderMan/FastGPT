@@ -18,24 +18,24 @@ const ManageUser = () => {
     <Box py={[3, '28px']} px={['5vw', '64px']}>
       <Flex alignItems={'center'} fontSize={'xl'} h={'30px'}>
         <MyIcon mr={2} name={'support/user/individuation'} w={'20px'} />
-        {t('support.account.Individuation')}
+        {t('support.account.ManageUser.Add User')}
       </Flex>
 
       <Card mt={6} px={[3, 10]} py={[3, 7]}>
         <Flex alignItems={'center'} w={['85%', '350px']}>
-          <Box flex={'0 0 80px'}>{t('user.Language')}:&nbsp;</Box>
+          <Box flex={'0 0 80px'}>{t('support.account.ManageUser.Username')}:&nbsp;</Box>
           <Box flex={'1 0 0'}>
             <MyInput value={inputValue} onChange={(e) => setInputValue(e.target.value)} />
           </Box>
         </Flex>
         <Flex mt={6} alignItems={'center'} w={['85%', '350px']}>
-          <Box flex={'0 0 80px'}>{t('user.Timezone')}:&nbsp;</Box>
+          <Box flex={'0 0 80px'}>{t('support.account.ManageUser.Password')}:&nbsp;</Box>
           <Box flex={'1 0 0'}>
             <MyPassword value={passwordValue} onChange={(e) => setPasswordValue(e.target.value)} />
           </Box>
         </Flex>
         <Flex mt={6} alignItems={'center'} w={['85%', '350px']}>
-          <Box flex={'0 0 80px'}>{t('user.Timezone')}:&nbsp;</Box>
+          {/*<Box flex={'0 0 80px'}>{t('user.Timezone')}:&nbsp;</Box>*/}
           <Box flex={'1 0 0'}>
             <Button onClick={onclickAdd}>{t('user.Add User')}</Button>
           </Box>

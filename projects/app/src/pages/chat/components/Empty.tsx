@@ -28,29 +28,29 @@ const Empty = ({
       alignItems={'center'}
       justifyContent={'center'}
     >
-      {name && (
-        <Card p={4} mb={10}>
-          <Flex mb={2} alignItems={'center'} justifyContent={'center'}>
-            <Avatar src={avatar} w={'32px'} h={'32px'} />
-            <Box ml={3} fontSize={'3xl'} fontWeight={'bold'}>
-              {name}
-            </Box>
-          </Flex>
-          <Box whiteSpace={'pre-line'}>{intro}</Box>
-        </Card>
-      )}
+      {/*{name && (*/}
+      {/*  <Card p={4} mb={10}>*/}
+      {/*    <Flex mb={2} alignItems={'center'} justifyContent={'center'}>*/}
+      {/*      <Avatar src={avatar} w={'32px'} h={'32px'} />*/}
+      {/*      <Box ml={3} fontSize={'3xl'} fontWeight={'bold'}>*/}
+      {/*        {name}*/}
+      {/*      </Box>*/}
+      {/*    </Flex>*/}
+      {/*    <Box whiteSpace={'pre-line'}>{intro}</Box>*/}
+      {/*  </Card>*/}
+      {/*)}*/}
 
-      {showChatProblem && (
-        <>
-          {/* version intro */}
-          <Card p={4} mb={10}>
-            <Markdown source={versionIntro} />
-          </Card>
-          <Card p={4}>
-            <Markdown source={chatProblem} />
-          </Card>
-        </>
-      )}
+      {/*{showChatProblem && (*/}
+      {/*  <>*/}
+      {/*    /!* version intro *!/*/}
+      {/*    <Card p={4} mb={10}>*/}
+      {/*      <Markdown source={versionIntro} />*/}
+      {/*    </Card>*/}
+      {/*    <Card p={4}>*/}
+      {/*      <Markdown source={chatProblem} />*/}
+      {/*    </Card>*/}
+      {/*  </>*/}
+      {/*)}*/}
     </Box>
   );
 };

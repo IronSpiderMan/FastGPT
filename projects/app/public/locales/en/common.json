@@ -1185,7 +1185,12 @@
   },
   "support": {
     "account": {
-      "Individuation": "Individuation"
+      "Individuation": "Individuation",
+      "ManageUser": {
+        "Add User":"Add User",
+        "Username": "Username",
+        "Password": "Password"
+      }
     },
     "openapi": {
       "Api baseurl": "Baseurl",

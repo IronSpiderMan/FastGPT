@@ -1,9 +1,14 @@
 import type { NextApiRequest, NextApiResponse } from 'next';
 import { jsonRes } from '@fastgpt/service/common/response';
 import { MongoUser } from '@fastgpt/service/support/user/schema';
+import { MongoTeamMember } from '@fastgpt/service/support/user/team/teamMemberSchema';
 import { connectToDatabase } from '@/service/mongo';
 import type { PostLoginProps } from '@fastgpt/global/support/user/api.d';
 import { hashStr } from '@fastgpt/global/common/string/tools';
+import {
+  TeamMemberRoleEnum,
+  TeamMemberStatusEnum
+} from '@fastgpt/global/support/user/team/constant';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -26,6 +31,30 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     const user = await MongoUser.create({
       username: username,
       password: hashStr(password)
+    });
+    console.log('===========创建用户================');
+    console.log(user);
+    //       await MongoTeamMember.create(
+    // [
+    //   {
+    //     teamId: insertedId,
+    //     userId,
+    //     name: 'Owner',
+    //     role: TeamMemberRoleEnum.owner,
+    //     status: TeamMemberStatusEnum.active,
+    //     createTime: new Date(),
+    //     defaultTeam: true
+    //   }
+    // ],
+    // { session }
+    await MongoTeamMember.create({
+      teamId: '65ee937be73242bdc4a05982',
+      userId: user._id,
+      name: 'Admin',
+      role: TeamMemberRoleEnum.owner,
+      status: TeamMemberStatusEnum.active,
+      createTime: new Date(),
+      defaultTeam: true
     });
     jsonRes(res, {
       data: {

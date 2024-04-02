@@ -1187,7 +1187,12 @@
   },
   "support": {
     "account": {
-      "Individuation": "个性化"
+      "Individuation": "个性化",
+      "ManageUser": {
+        "Add User":"添加用户",
+        "Username": "用户名",
+        "Password": "密码"
+      }
     },
     "openapi": {
       "Api baseurl": "API根地址",
