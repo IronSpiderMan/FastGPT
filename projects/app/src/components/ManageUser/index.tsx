@@ -19,7 +19,7 @@ const ManageUser = () => {
         title: '添加成功',
         status: 'success'
       });
-    } catch (err) {
+    } catch (err: any) {
       console.log(err);
       toast({
         title: err.message,
@@ -32,7 +32,7 @@ const ManageUser = () => {
     //   status: 'success'
     // });
     // console.log(user);
-  });
+  }, []);
   return (
     <Box py={[3, '28px']} px={['5vw', '64px']}>
       <Flex alignItems={'center'} fontSize={'xl'} h={'30px'}>
