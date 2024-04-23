@@ -121,18 +121,18 @@ const AIChatSettingsModal = ({
       title={
         <>
           {t('common.More settings')}
-          {feConfigs?.docUrl && (
-            <Link
-              href={getDocPath('/docs/use-cases/ai_settings/')}
-              target={'_blank'}
-              ml={1}
-              textDecoration={'underline'}
-              fontWeight={'normal'}
-              fontSize={'md'}
-            >
-              {t('common.Read intro')}
-            </Link>
-          )}
+          {/*{feConfigs?.docUrl && (*/}
+          {/*  <Link*/}
+          {/*    href={getDocPath('/docs/use-cases/ai_settings/')}*/}
+          {/*    target={'_blank'}*/}
+          {/*    ml={1}*/}
+          {/*    textDecoration={'underline'}*/}
+          {/*    fontWeight={'normal'}*/}
+          {/*    fontSize={'md'}*/}
+          {/*  >*/}
+          {/*    {t('common.Read intro')}*/}
+          {/*  </Link>*/}
+          {/*)}*/}
         </>
       }
       isCentered

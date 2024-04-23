@@ -36,7 +36,7 @@ const ManageUser = () => {
   return (
     <Box py={[3, '28px']} px={['5vw', '64px']}>
       <Flex alignItems={'center'} fontSize={'xl'} h={'30px'}>
-        <MyIcon mr={2} name={'support/user/individuation'} w={'20px'} />
+        <MyIcon mr={2} name={'support/user/userLight'} w={'20px'} />
         {t('support.account.ManageUser.Add User')}
       </Flex>
 

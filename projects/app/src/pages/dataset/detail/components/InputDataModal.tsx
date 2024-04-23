@@ -85,8 +85,8 @@ const InputDataModal = ({
     },
     ...(dataId
       ? [{ label: t('dataset.data.edit.Delete'), id: TabEnum.delete, icon: 'delete' }]
-      : []),
-    { label: t('dataset.data.edit.Course'), id: TabEnum.doc, icon: 'common/courseLight' }
+      : [])
+    // { label: t('dataset.data.edit.Course'), id: TabEnum.doc, icon: 'common/courseLight' }
   ];
 
   const { ConfirmModal, openConfirm } = useConfirm({

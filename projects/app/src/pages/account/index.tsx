@@ -96,7 +96,7 @@ const Account = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
         ]
       : []),
     {
-      icon: 'support/user/individuation',
+      icon: 'support/user/userLight',
       label: t('support.user.Manage'),
       id: TabEnum.manage
     },
