@@ -42,10 +42,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
 
     const userDetail = await getUserDetail({
       tmbId: user?.lastLoginTmbId,
-      userId: user._id
+      userId: user?._id
     });
 
-    MongoUser.findByIdAndUpdate(user._id, {
+    MongoUser.findByIdAndUpdate(user?._id, {
       lastLoginTmbId: userDetail.team.tmbId
     });
 
