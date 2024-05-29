@@ -100,13 +100,13 @@ const Account = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
     //   label: t('support.user.Manage'),
     //   id: TabEnum.manage
     // },
-    ...(userInfo?.username === 'root' || userInfo?.username === 'admin'?
-        [
+    ...(userInfo?.username === 'root' || userInfo?.username === 'admin'
+      ? [
           {
             icon: 'support/user/userLight',
             label: t('support.user.Manage'),
             id: TabEnum.manage
-          },
+          }
         ]
       : []),
     {
