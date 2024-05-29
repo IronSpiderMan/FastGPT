@@ -45,7 +45,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
       userId: user?._id
     });
 
-    MongoUser.findByIdAndUpdate(user?._id, {
+    await MongoUser.findByIdAndUpdate(user?._id, {
       lastLoginTmbId: userDetail.team.tmbId
     });
 
