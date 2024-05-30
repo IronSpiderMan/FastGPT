@@ -31,8 +31,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
     });
     const team = await MongoTeam.findOne({ name: 'My Team' });
     await MongoTeamMember.create({
-      teamId: team.teamId,
-      userId: user._id,
+      teamId: team?.teamId,
+      userId: user?._id,
       name: 'Admin',
       role: TeamMemberRoleEnum.admin,
       status: TeamMemberStatusEnum.active,
