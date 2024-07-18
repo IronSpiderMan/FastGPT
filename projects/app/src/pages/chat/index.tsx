@@ -1,4 +1,4 @@
-import React, { useCallback, useRef } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { getInitChatInfo } from '@/web/core/chat/api';
@@ -9,7 +9,8 @@ import {
   Drawer,
   DrawerOverlay,
   DrawerContent,
-  useTheme
+  useTheme,
+  SwitchProps
 } from '@chakra-ui/react';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useQuery } from '@tanstack/react-query';
@@ -18,6 +19,7 @@ import { useChatStore } from '@/web/core/chat/storeChat';
 import { useLoading } from '@/web/common/hooks/useLoading';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { customAlphabet } from 'nanoid';
+
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 12);
 import type { ChatHistoryItemType } from '@fastgpt/global/core/chat/type.d';
 import { useTranslation } from 'next-i18next';
@@ -35,6 +37,8 @@ import { useAppStore } from '@/web/core/app/store/useAppStore';
 import { checkChatSupportSelectFileByChatModels } from '@/web/core/chat/utils';
 import { chatContentReplaceBlock } from '@fastgpt/global/core/chat/utils';
 import { ChatStatusEnum } from '@fastgpt/global/core/chat/constants';
+import Script from 'next/script';
+import DigitalHumanChatBox, { DigitalHumanChatBoxHandle } from '@/components/DigitalHumanChatBox';
 
 const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
   const router = useRouter();
@@ -244,7 +248,26 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
   });
 
   useQuery(['loadHistories', appId], () => (appId ? loadHistories({ appId }) : null));
-
+  const DigitalHumanChatBoxRef = useRef<DigitalHumanChatBoxHandle>(null);
+  const [isDigitalHumanMode, setIsDigitalHumanMode] = useState<boolean>(false);
+  const handleSwitchChange = (evnet: ChangeEvent<HTMLInputElement>) => {
+    const checked: boolean = (event?.target as HTMLInputElement).checked;
+    setIsDigitalHumanMode(checked);
+    if (!checked && DigitalHumanChatBoxRef.current) {
+      DigitalHumanChatBoxRef.current.stop();
+    } else {
+    }
+  };
+  const handleSentenceEnd = async (query: string) => {
+    return '你好啊';
+  };
+  useEffect(() => {
+    if (DigitalHumanChatBoxRef.current) {
+      if (isDigitalHumanMode) {
+        DigitalHumanChatBoxRef.current.start();
+      }
+    }
+  }, [isDigitalHumanMode, DigitalHumanChatBoxRef.current]);
   return (
     <Flex h={'100%'}>
       <Head>
@@ -329,6 +352,14 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
             flex={'1 0 0'}
             flexDirection={'column'}
           >
+            <Script
+              src="https://virtualhuman-app.oss-cn-beijing.aliyuncs.com/interaction/public/js/sdk/release/xiaoiceRTC1.0.6.js"
+              strategy="afterInteractive"
+            ></Script>
+            <Script
+              src="https://virtualhuman-app.oss-cn-beijing.aliyuncs.com/interaction/public/js/sdk/release/xiaoiceASR1.0.4.js"
+              strategy="afterInteractive"
+            ></Script>
             {/* header */}
             <ChatHeader
               appAvatar={chatData.app.avatar}
@@ -338,23 +369,45 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
               chatModels={chatData.app.chatModels}
               onOpenSlider={onOpenSlider}
               showHistory
+              onSwitchChange={handleSwitchChange}
             />
 
             {/* chat box */}
             <Box flex={1}>
-              <ChatBox
-                ref={ChatBoxRef}
-                showEmptyIntro
-                appAvatar={chatData.app.avatar}
-                userAvatar={userInfo?.avatar}
-                userGuideModule={chatData.app?.userGuideModule}
-                showFileSelector={checkChatSupportSelectFileByChatModels(chatData.app.chatModels)}
-                feedbackType={'user'}
-                onStartChat={startChat}
-                onDelMessage={(e) => delOneHistoryItem({ ...e, appId, chatId })}
-                appId={appId}
-                chatId={chatId}
-              />
+              {isDigitalHumanMode && (
+                <DigitalHumanChatBox
+                  ref={DigitalHumanChatBoxRef}
+                  onSentenceEndCallback={handleSentenceEnd}
+                />
+              )}
+              {!isDigitalHumanMode && (
+                <ChatBox
+                  ref={ChatBoxRef}
+                  showEmptyIntro
+                  appAvatar={chatData.app.avatar}
+                  userAvatar={userInfo?.avatar}
+                  userGuideModule={chatData.app?.userGuideModule}
+                  showFileSelector={checkChatSupportSelectFileByChatModels(chatData.app.chatModels)}
+                  feedbackType={'user'}
+                  onStartChat={startChat}
+                  onDelMessage={(e) => delOneHistoryItem({ ...e, appId, chatId })}
+                  appId={appId}
+                  chatId={chatId}
+                />
+              )}
+              {/*<ChatBox*/}
+              {/*  ref={ChatBoxRef}*/}
+              {/*  showEmptyIntro*/}
+              {/*  appAvatar={chatData.app.avatar}*/}
+              {/*  userAvatar={userInfo?.avatar}*/}
+              {/*  userGuideModule={chatData.app?.userGuideModule}*/}
+              {/*  showFileSelector={checkChatSupportSelectFileByChatModels(chatData.app.chatModels)}*/}
+              {/*  feedbackType={'user'}*/}
+              {/*  onStartChat={startChat}*/}
+              {/*  onDelMessage={(e) => delOneHistoryItem({ ...e, appId, chatId })}*/}
+              {/*  appId={appId}*/}
+              {/*  chatId={chatId}*/}
+              {/*/>*/}
             </Box>
           </Flex>
         </Flex>

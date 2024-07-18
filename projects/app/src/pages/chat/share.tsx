@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef, useState } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef, useState } from 'react';
 import Head from 'next/head';
 import { useRouter } from 'next/router';
 import { Box, Flex, useDisclosure, Drawer, DrawerOverlay, DrawerContent } from '@chakra-ui/react';
@@ -366,6 +366,9 @@ const OutLink = ({
             history={chatData.history}
             showHistory={showHistory === '1'}
             onOpenSlider={onOpenSlider}
+            onSwitchChange={(event: ChangeEvent<HTMLInputElement>) => {
+              return false;
+            }}
           />
           {/* chat box */}
           <Box flex={1}>

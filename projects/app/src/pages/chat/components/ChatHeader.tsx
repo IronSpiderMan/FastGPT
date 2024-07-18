@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { ChangeEvent, useMemo } from 'react';
 import { Flex, useTheme, Box } from '@chakra-ui/react';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import MyIcon from '@fastgpt/web/components/common/Icon';
@@ -9,6 +9,7 @@ import type { ChatItemType } from '@fastgpt/global/core/chat/type';
 import { useRouter } from 'next/router';
 import { useTranslation } from 'next-i18next';
 import { chatContentReplaceBlock } from '@fastgpt/global/core/chat/utils';
+import DigitalHumanSwitch from '@/components/DigitalHumanSwitch';
 
 const ChatHeader = ({
   history,
@@ -17,7 +18,8 @@ const ChatHeader = ({
   chatModels,
   appId,
   showHistory,
-  onOpenSlider
+  onOpenSlider,
+  onSwitchChange
 }: {
   history: ChatItemType[];
   appName: string;
@@ -26,6 +28,7 @@ const ChatHeader = ({
   appId?: string;
   showHistory?: boolean;
   onOpenSlider: () => void;
+  onSwitchChange: (event: ChangeEvent<HTMLInputElement>) => void;
 }) => {
   const router = useRouter();
   const theme = useTheme();
@@ -96,6 +99,7 @@ const ChatHeader = ({
       )}
       {/* control */}
       <ToolMenu history={history} />
+      <DigitalHumanSwitch onChange={onSwitchChange} />
     </Flex>
   );
 };

@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import React, { ChangeEvent, useCallback, useEffect, useRef } from 'react';
 import Head from 'next/head';
 import { getTeamChatInfo } from '@/web/core/chat/api';
 import { useRouter } from 'next/router';
@@ -352,6 +352,9 @@ const OutLink = ({
               history={chatData.history}
               onOpenSlider={onOpenSlider}
               showHistory
+              onSwitchChange={(event: ChangeEvent<HTMLInputElement>) => {
+                return false;
+              }}
             />
             {/* chat box */}
             <Box flex={1}>
