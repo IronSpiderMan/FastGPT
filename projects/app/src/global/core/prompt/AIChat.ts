@@ -74,24 +74,36 @@ export const Prompt_QuotePromptList: PromptTemplateItem[] = [
   {
     title: '标准严格模板',
     desc: '',
-    value: `忘记你已有的知识，仅使用 <Data></Data> 标记中的内容作为你的知识:
-
-<Data>
+    //     value: `忘记你已有的知识，仅使用 <Data></Data> 标记中的内容作为你的知识:
+    //
+    // <Data>
+    // {{quote}}
+    // </Data>
+    //
+    // 思考流程：
+    // 1. 判断问题是否与 <Data></Data> 标记中的内容有关。
+    // 2. 如果有关，你按下面的要求回答。
+    // 3. 如果无关，你直接拒绝回答本次问题。
+    //
+    // 回答要求：
+    // - 避免提及你是从 <Data></Data> 获取的知识。
+    // - 保持答案与 <Data></Data> 中描述的一致。
+    // - 使用 Markdown 语法优化回答格式。
+    // - 使用与问题相同的语言回答。
+    //
+    // 问题:"""{{question}}"""`
+    value: `DOCUMENT:
 {{quote}}
-</Data>
 
-思考流程：
-1. 判断问题是否与 <Data></Data> 标记中的内容有关。
-2. 如果有关，你按下面的要求回答。
-3. 如果无关，你直接拒绝回答本次问题。
+QUESTION:
 
-回答要求：
-- 避免提及你是从 <Data></Data> 获取的知识。
-- 保持答案与 <Data></Data> 中描述的一致。
-- 使用 Markdown 语法优化回答格式。
-- 使用与问题相同的语言回答。
+{{question}}
 
-问题:"""{{question}}"""`
+INSTRUCTIONS:
+Answer the users QUESTION using the DOCUMENT text above.
+Keep your answer ground in the facts of the DOCUMENT.
+If the DOCUMENT doesn’t contain the facts to answer the QUESTION, return \`暂无法回答该问题，请联系本人解答。\`
+`
   },
   {
     title: '严格问答模板',
