@@ -39,6 +39,7 @@ import { chatContentReplaceBlock } from '@fastgpt/global/core/chat/utils';
 import { ChatStatusEnum } from '@fastgpt/global/core/chat/constants';
 import Script from 'next/script';
 import DigitalHumanChatBox, { DigitalHumanChatBoxHandle } from '@/components/DigitalHumanChatBox';
+import AssistantChatBox, { type AssistantComponentRef } from '@/components/AssistantChatBox';
 
 const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
   const router = useRouter();
@@ -47,6 +48,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
   const { toast } = useToast();
 
   const ChatBoxRef = useRef<ComponentRef>(null);
+  const AssistantChatBoxRef = useRef<AssistantComponentRef>(null);
   const forbidRefresh = useRef(false);
 
   const {
@@ -253,10 +255,38 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
   const handleSwitchChange = (evnet: ChangeEvent<HTMLInputElement>) => {
     const checked: boolean = (event?.target as HTMLInputElement).checked;
     setIsDigitalHumanMode(checked);
-    if (!checked && DigitalHumanChatBoxRef.current) {
-      DigitalHumanChatBoxRef.current.stop();
+    setChatHistoryForChatBox();
+    if (!checked) {
+      // 关闭数字人
+      // DigitalHumanChatBoxRef.current.stop();
+      console.log('关闭数字人');
+      AssistantChatBoxRef.current?.stop();
     } else {
+      console.log('开启数字人');
+      // 开启数字人
+      setTimeout(() => {
+        AssistantChatBoxRef.current?.start();
+      }, 500);
     }
+  };
+  const setChatHistoryForChatBox = () => {
+    setIsLoading(true);
+    setTimeout(() => {
+      const history = chatData.history.map((item) => ({
+        ...item,
+        status: ChatStatusEnum.finish
+      }));
+      AssistantChatBoxRef.current?.resetHistory(history);
+      AssistantChatBoxRef.current?.resetVariables(chatData.variables);
+      ChatBoxRef.current?.resetHistory(history);
+      ChatBoxRef.current?.resetVariables(chatData.variables);
+      setIsLoading(false);
+      if (history.length > 0) {
+        setTimeout(() => {
+          ChatBoxRef.current?.scrollToBottom('auto');
+        }, 500);
+      }
+    }, 500);
   };
   const handleSentenceEnd = async (query: string) => {
     return '你好啊';
@@ -375,9 +405,21 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
             {/* chat box */}
             <Box flex={1}>
               {isDigitalHumanMode && (
-                <DigitalHumanChatBox
-                  ref={DigitalHumanChatBoxRef}
-                  onSentenceEndCallback={handleSentenceEnd}
+                // <DigitalHumanChatBox
+                //   ref={DigitalHumanChatBoxRef}
+                //   onSentenceEndCallback={handleSentenceEnd}
+                // />
+                <AssistantChatBox
+                  ref={AssistantChatBoxRef}
+                  showEmptyIntro
+                  appAvatar={chatData.app.avatar}
+                  userAvatar={userInfo?.avatar}
+                  userGuideModule={chatData.app?.userGuideModule}
+                  showFileSelector={checkChatSupportSelectFileByChatModels(chatData.app.chatModels)}
+                  feedbackType={'user'}
+                  onStartChat={startChat}
+                  appId={appId}
+                  chatId={chatId}
                 />
               )}
               {!isDigitalHumanMode && (

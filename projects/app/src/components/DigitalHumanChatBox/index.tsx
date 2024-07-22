@@ -7,9 +7,12 @@ import {
   Box,
   Button,
   Center,
+  Flex,
   CircularProgress
 } from '@chakra-ui/react';
-import React, { forwardRef, useEffect, useImperativeHandle, useState } from 'react';
+import MessageInput from '@/components/ChatBox/MessageInput';
+import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
+import axios from 'axios';
 
 // import {OpenAI} from 'openai';
 
@@ -22,81 +25,162 @@ export interface DigitalHumanChatBoxHandle {
   stop: () => void;
 }
 
-export async function fetch_chat(msg: string, prompt: string) {
-  const url = 'http://localhost:3000/api/v1/chat/completions';
-  const token = 'Bearer hku-eT8Zx6AIFEcJQ1uoAKnDiydGelU2UH7sK6NKUn5ThVOzlX86EpsP';
-
-  const requestData = {
-    chatId: '111',
-    stream: false,
-    detail: false,
-    messages: [
-      {
-        content: prompt,
-        role: 'system'
-      },
-      {
-        content: msg,
-        role: 'user'
-      }
-    ]
-  };
-
-  try {
-    const response = await fetch(url, {
-      method: 'POST',
-      headers: {
-        Authorization: token,
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify(requestData)
-    });
-
-    if (!response.ok) {
-      throw new Error('Network response was not ok');
-    }
-
-    const responseData = await response.json();
-    return responseData['choices'][0]['message']['content'];
-  } catch (error) {
-    console.error('There was a problem with the fetch operation:', error);
-    return '暂时无法回答这个问题';
-  }
-}
-
-// export async function chat(msg: string, prompt: string) {
-//     console.log(process.env);
-//     console.log(process.env.DIGITAL_HUMAN_BASE_URL, process.env.DIGITAL_HUMAN_API_KEY);
-//     const client = new OpenAI({
-//         baseURL: 'http://localhost:3000/api/v1',
-//         apiKey: 'hku-eT8Zx6AIFEcJQ1uoAKnDiydGelU2UH7sK6NKUn5ThVOzlX86EpsP',
-//         defaultHeaders: `Authorization: Bearer hku-eT8Zx6AIFEcJQ1uoAKnDiydGelU2UH7sK6NKUn5ThVOzlX86EpsP`,
-//         dangerouslyAllowBrowser: true
-//     });
+// export async function fetch_chat(msg: string, prompt: string) {
+//     const url = 'http://localhost:3000/api/v1/chat/completions';
+//     const token = 'Bearer hku-eT8Zx6AIFEcJQ1uoAKnDiydGelU2UH7sK6NKUn5ThVOzlX86EpsP';
+//
+//     const requestData = {
+//         chatId: '111',
+//         stream: false,
+//         detail: false,
+//         messages: [
+//             {
+//                 content: prompt,
+//                 role: 'system'
+//             },
+//             {
+//                 content: msg,
+//                 role: 'user'
+//             }
+//         ]
+//     };
+//
 //     try {
-//         const completion = await client.chat.completions.create({
-//             model: 'gpt-3.5-turbo',
-//             messages: [
-//                 {role: 'system', content: `${prompt}`},
-//                 {role: 'user', content: `${msg}`}
-//             ]
+//         const response = await fetch(url, {
+//             method: 'POST',
+//             headers: {
+//                 Authorization: token,
+//                 'Content-Type': 'application/json'
+//             },
+//             body: JSON.stringify(requestData)
 //         });
-//         return completion.choices[0].message.content;
-//     } catch (err) {
-//         throw Error('Failed to send message');
+//
+//         if (!response.ok) {
+//             throw new Error('Network response was not ok');
+//         }
+//
+//         const responseData = await response.json();
+//         return responseData['choices'][0]['message']['content'];
+//     } catch (error) {
+//         console.error('There was a problem with the fetch operation:', error);
+//         return '暂时无法回答这个问题';
 //     }
 // }
+
+export async function chat(message: string) {
+  try {
+    const response = await axios.post<any>(`http://localhost:8080/api/v1/assistants/rag`, null, {
+      params: {
+        message: encodeURIComponent(message)
+      },
+      headers: {
+        Accept: 'application/json'
+      }
+    });
+    return response.data;
+  } catch (error) {
+    console.log('Fetch error', error);
+    throw error;
+  }
+}
 
 // eslint-disable-next-line react/display-name
 const DigitalHumanChatBox = forwardRef<DigitalHumanChatBoxHandle, DigitalHumanChatBoxProps>(
   (props, ref) => {
+    console.log('===============================================');
+    console.log('===============================================');
     const { onSentenceEndCallback } = props;
-    let client: any = null;
-    let asr: any = null;
+    const [client, setClient] = useState<any>(null);
+    const [asr, setAsr] = useState<any>(null);
+    const signatureRef = useRef('');
     const [isLoading, setIsLoading] = useState<boolean>(true);
     const [isConnected, setIsConnected] = useState<boolean>(true);
     const cancelRef = React.useRef(null);
-    let signature: string = '';
+    useEffect(() => {
+      if (!signatureRef.current) {
+        axios
+          .get('https://interactive-virtualhuman.xiaoice.com/openapi/signature/gen', {
+            headers: {
+              'Content-Type': 'application/json',
+              'subscription-key': 'e4fea774231a4865b524c14d67255223'
+            }
+          })
+          .then((response) => {
+            // 获取signature
+            signatureRef.current = response.data.data;
+            console.log('获取的signature', signatureRef.current);
+            if (!client) {
+              const newClient = new window.RTCInteraction({
+                mountClass: 'content',
+                signature: signatureRef.current,
+                projectId: 'ec458327-02fb-11ef-a49e-1d85fe26a7cf',
+                onError(errorCode: number, errorMessage: string) {
+                  console.log(errorCode, errorMessage);
+                },
+                onInited() {
+                  console.log('inited...');
+                  newClient.startRTC();
+                  if (!asr) {
+                    const newAsr = new window.AsrSDK({
+                      onSentenceEnd: function (res: any) {
+                        let query = res?.result?.voice_text_str;
+                        console.log('识别到文本', query);
+                        if (
+                          !query ||
+                          query.trim() === '' ||
+                          query.trim().length < 2 ||
+                          query.trim() === '嗯。'
+                        ) {
+                          console.log('暂不能回答问题');
+                          return;
+                        }
+                        // const answer = onSentenceEndCallback(query.trim())
+                        if (newClient) {
+                          console.log('onSentenceEnd', '暂停识别');
+                          newAsr.stop();
+                          chat(query)
+                            .then((resp) => {
+                              console.log(resp);
+                              newClient.talk(resp?.message);
+                            })
+                            .catch((err) => {
+                              console.log('回复内容', err);
+                              newClient.talk('暂时无法回答，请联系本人解答');
+                            });
+                        }
+                      }
+                    });
+                    setAsr(newAsr);
+                  }
+                },
+                onTalkStart(talkRes: any) {
+                  if (asr) {
+                    asr.stop();
+                  }
+                  console.log('onTalkStart', '暂停识别');
+                },
+                onStopStream() {
+                  if (asr) {
+                    asr.stop();
+                  }
+                  console.log('暂停识别');
+                },
+                onTalkEnd(talkRes: any) {
+                  console.log('signature: ', signatureRef.current);
+                  if (asr) {
+                    asr.start(signatureRef.current);
+                  }
+                  console.log('onTalkEnd', '开始识别');
+                }
+              });
+              setClient(newClient);
+            }
+          })
+          .catch((error) => {
+            console.log(error);
+          });
+      }
+    }, [client, asr, signatureRef]);
     if (navigator?.mediaDevices) {
       navigator?.mediaDevices
         ?.getUserMedia({ audio: true })
@@ -134,123 +218,26 @@ const DigitalHumanChatBox = forwardRef<DigitalHumanChatBoxHandle, DigitalHumanCh
     });
     // 开始观察目标节点，并配置观察器选项
     observer.observe(targetNode, config);
-    // 连接数字人
-    const connectDigitalHuman = () => {
-      //创建Asr
-      if (window.AsrSDK) {
-        asr = new window.AsrSDK({
-          onSentenceEnd(res: any) {
-            let query = res?.result?.voice_text_str;
-            console.log('识别到文本', query);
-            if (
-              !query ||
-              query.trim() === '' ||
-              query.trim().length < 2 ||
-              query.trim() === '嗯。'
-            ) {
-              console.log('暂不能回答问题');
-              return;
-            }
-            // const answer = onSentenceEndCallback(query.trim())
-            if (client) {
-              // console.log("回答", answer)
-              console.log('onSentenceEnd', '暂停识别');
-              asr.stop();
-              fetch_chat(
-                query,
-                '我希望你能充当香港科技大学（广州校区）的熊博士，性别男。我将扮演提问的学生，请尽可能简短回复我。我需要将你回复的内容进行TTS，因此需要你回复适合TTS的内容，无论我问什么都不要回复代码、markdown、bash、cmd、shell等内容。'
-              )
-                .then((resp) => {
-                  console.log('回复内容', resp);
-                  client.talk(resp);
-                })
-                .catch((err) => {
-                  console.log('回复内容', err);
-                  client.talk('暂时无法回答，请联系本人解答');
-                });
-            }
-          }
-        });
-      }
-      fetch('https://interactive-virtualhuman.xiaoice.com/openapi/signature/gen', {
-        method: 'GET',
-        headers: {
-          'Content-Type': 'application/json',
-          'subscription-key': 'e4fea774231a4865b524c14d67255223'
-        }
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error('Network response was not ok');
-          }
-          return response.json();
-        })
-        .then((res) => {
-          if (window.RTCInteraction) {
-            client = new window.RTCInteraction({
-              mountClass: 'content',
-              signature: res?.data,
-              projectId: 'ec458327-02fb-11ef-a49e-1d85fe26a7cf',
-              onError(errorCode: number, errorMessage: string) {
-                console.log(errorCode, errorMessage);
-              },
-              onInited() {
-                console.log('inited...');
-                signature = res?.data;
-                client.startRTC();
-              },
-              onTalkStart(talkRes: any) {
-                asr.stop();
-                console.log('onTalkStart', '暂停识别');
-              },
-              onStopStream() {
-                asr.stop();
-                console.log('暂停识别');
-                // setIsConnected(false);
-              },
-              onTalkEnd(talkRes: any) {
-                asr.start(signature);
-                console.log('onTalkEnd', '开始识别');
-              }
-            });
-          }
-        })
-        .catch((error) => {
-          console.error('There was a problem with the fetch operation:', error);
-        });
-    };
-    useEffect(() => {
-      return () => {
-        console.log('============================================================');
-        console.log('Stop Digital Human');
-        console.log(client, asr);
-        console.log('============================================================');
-        if (client) {
-          console.log('End RTC');
-          client.endRTC();
-        }
-        if (asr) {
-          console.log('End Asr');
-          asr.stop();
-        }
-        setIsConnected(false);
-      };
-    }, []);
-
     useImperativeHandle(ref, () => ({
       start() {
         console.log('Start DigitalHuman');
         console.log('连接数字人');
-        console.log(client, asr);
-        connectDigitalHuman();
         setIsConnected(true);
       },
       stop() {
-        console.log(client, asr);
+        console.log('Stop DigitalHuman');
+        if (asr) {
+          console.log('停止asr');
+          asr.stop();
+        }
+        if (client) {
+          console.log('停止RTC');
+          client.endRTC();
+        }
       }
     }));
     return (
-      <>
+      <Flex flexDirection={'column'} h={'100%'}>
         <AlertDialog
           isOpen={isLoading}
           leastDestructiveRef={cancelRef}
@@ -272,6 +259,7 @@ const DigitalHumanChatBox = forwardRef<DigitalHumanChatBoxHandle, DigitalHumanCh
             </AlertDialogContent>
           </AlertDialogOverlay>
         </AlertDialog>
+        <Box></Box>
         {!isConnected && (
           <Center w="100%" h="100%">
             <Button>点击重新连接</Button>
@@ -279,10 +267,23 @@ const DigitalHumanChatBox = forwardRef<DigitalHumanChatBoxHandle, DigitalHumanCh
         )}
         {isConnected && (
           <Center w="100%" h="100%">
-            <Box w="100%" h="100%" className="content"></Box>
+            <Box
+              w="100%"
+              h="100%"
+              className="content"
+              onClick={() => {
+                console.log(process.env.RAG_BASE_URL);
+                if (client) {
+                  client.breakTalking();
+                }
+                if (signatureRef.current && asr) {
+                  asr.start(signatureRef.current);
+                }
+              }}
+            ></Box>
           </Center>
         )}
-      </>
+      </Flex>
     );
   }
 );
