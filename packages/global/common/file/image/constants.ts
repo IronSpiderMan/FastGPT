@@ -7,6 +7,7 @@ export enum MongoImageTypeEnum {
   datasetAvatar = 'datasetAvatar',
   userAvatar = 'userAvatar',
   teamAvatar = 'teamAvatar',
+  assistantAvatar = 'assistantAvatar',
 
   chatImage = 'chatImage',
   collectionImage = 'collectionImage'
@@ -34,6 +35,10 @@ export const mongoImageTypeMap = {
   },
   [MongoImageTypeEnum.teamAvatar]: {
     label: 'common.file.type.teamAvatar',
+    unique: true
+  },
+  [MongoImageTypeEnum.assistantAvatar]: {
+    label: 'common.file.type.assistantAvatar',
     unique: true
   },
 

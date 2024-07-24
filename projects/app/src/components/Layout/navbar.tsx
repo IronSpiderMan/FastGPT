@@ -40,6 +40,13 @@ const Navbar = ({ unread }: { unread: number }) => {
         link: `/app/list`,
         activeLink: ['/app/list', '/app/detail']
       },
+      {
+        label: t('assistant.Assistant'),
+        icon: 'core/app/aiLight',
+        activeIcon: 'core/app/aiFill',
+        link: '/assistant/list',
+        activeLink: ['/assistant/list', 'assistant/detail']
+      },
       // {
       //   label: t('navbar.Plugin'),
       //   icon: 'common/navbar/pluginLight',

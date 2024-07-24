@@ -55,6 +55,17 @@
       "Title is required": "模块名不能为空"
     }
   },
+  "assistant": {
+    "Assistant": "数字人",
+    "Info": "数字人信息",
+    "edit": {
+      "Name": "姓名",
+      "Title": "称呼",
+      "Intro": "简介",
+      "ProjectId": "项目Id"
+    },
+    "All Assistants": "数字人"
+  },
   "common": {
     "Add": "添加",
     "Add New": "新增",

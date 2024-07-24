@@ -55,6 +55,17 @@
       "Title is required": "Title is required"
     }
   },
+  "assistant": {
+    "Assistant": "Assistant",
+    "Info": "Information",
+    "edit": {
+      "Name": "name",
+      "Title": "nickname",
+      "Intro": "introduction",
+      "ProjectId": "project id"
+    },
+    "All Assistants": "Digital Human"
+  },
   "common": {
     "Add": "Add",
     "Add New": "Add",

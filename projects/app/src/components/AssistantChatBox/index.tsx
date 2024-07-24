@@ -151,7 +151,7 @@ const AssistantChatBox = (
               mountClass: 'content',
               signature: signatureRef.current,
               timeout: 60 * 1000 * 5,
-              projectId: 'ec458327-02fb-11ef-a49e-1d85fe26a7cf',
+              projectId: '8720e05c-4810-11ef-8185-15e4c5cfd30b',
               onError(errorCode: number, errorMessage: string) {
                 console.log(errorCode, errorMessage);
               },
