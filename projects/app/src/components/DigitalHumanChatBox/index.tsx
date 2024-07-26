@@ -10,11 +10,9 @@ import {
   Flex,
   CircularProgress
 } from '@chakra-ui/react';
-import MessageInput from '@/components/ChatBox/MessageInput';
 import React, { forwardRef, useEffect, useImperativeHandle, useRef, useState } from 'react';
 import axios from 'axios';
-
-// import {OpenAI} from 'openai';
+import { getSignature } from '@/web/core/assistant/api';
 
 interface DigitalHumanChatBoxProps {
   onSentenceEndCallback: (query: string) => Promise<string>;
@@ -24,48 +22,6 @@ export interface DigitalHumanChatBoxHandle {
   start: () => void;
   stop: () => void;
 }
-
-// export async function fetch_chat(msg: string, prompt: string) {
-//     const url = 'http://localhost:3000/api/v1/chat/completions';
-//     const token = 'Bearer hku-eT8Zx6AIFEcJQ1uoAKnDiydGelU2UH7sK6NKUn5ThVOzlX86EpsP';
-//
-//     const requestData = {
-//         chatId: '111',
-//         stream: false,
-//         detail: false,
-//         messages: [
-//             {
-//                 content: prompt,
-//                 role: 'system'
-//             },
-//             {
-//                 content: msg,
-//                 role: 'user'
-//             }
-//         ]
-//     };
-//
-//     try {
-//         const response = await fetch(url, {
-//             method: 'POST',
-//             headers: {
-//                 Authorization: token,
-//                 'Content-Type': 'application/json'
-//             },
-//             body: JSON.stringify(requestData)
-//         });
-//
-//         if (!response.ok) {
-//             throw new Error('Network response was not ok');
-//         }
-//
-//         const responseData = await response.json();
-//         return responseData['choices'][0]['message']['content'];
-//     } catch (error) {
-//         console.error('There was a problem with the fetch operation:', error);
-//         return '暂时无法回答这个问题';
-//     }
-// }
 
 export async function chat(message: string) {
   try {
@@ -87,9 +43,6 @@ export async function chat(message: string) {
 // eslint-disable-next-line react/display-name
 const DigitalHumanChatBox = forwardRef<DigitalHumanChatBoxHandle, DigitalHumanChatBoxProps>(
   (props, ref) => {
-    console.log('===============================================');
-    console.log('===============================================');
-    const { onSentenceEndCallback } = props;
     const [client, setClient] = useState<any>(null);
     const [asr, setAsr] = useState<any>(null);
     const signatureRef = useRef('');
@@ -98,87 +51,77 @@ const DigitalHumanChatBox = forwardRef<DigitalHumanChatBoxHandle, DigitalHumanCh
     const cancelRef = React.useRef(null);
     useEffect(() => {
       if (!signatureRef.current) {
-        axios
-          .get('https://interactive-virtualhuman.xiaoice.com/openapi/signature/gen', {
-            headers: {
-              'Content-Type': 'application/json',
-              'subscription-key': 'e4fea774231a4865b524c14d67255223'
-            }
-          })
-          .then((response) => {
-            // 获取signature
-            signatureRef.current = response.data.data;
-            console.log('获取的signature', signatureRef.current);
-            if (!client) {
-              const newClient = new window.RTCInteraction({
-                mountClass: 'content',
-                signature: signatureRef.current,
-                projectId: 'ec458327-02fb-11ef-a49e-1d85fe26a7cf',
-                onError(errorCode: number, errorMessage: string) {
-                  console.log(errorCode, errorMessage);
-                },
-                onInited() {
-                  console.log('inited...');
-                  newClient.startRTC();
-                  if (!asr) {
-                    const newAsr = new window.AsrSDK({
-                      onSentenceEnd: function (res: any) {
-                        let query = res?.result?.voice_text_str;
-                        console.log('识别到文本', query);
-                        if (
-                          !query ||
-                          query.trim() === '' ||
-                          query.trim().length < 2 ||
-                          query.trim() === '嗯。'
-                        ) {
-                          console.log('暂不能回答问题');
-                          return;
-                        }
-                        // const answer = onSentenceEndCallback(query.trim())
-                        if (newClient) {
-                          console.log('onSentenceEnd', '暂停识别');
-                          newAsr.stop();
-                          chat(query)
-                            .then((resp) => {
-                              console.log(resp);
-                              newClient.talk(resp?.message);
-                            })
-                            .catch((err) => {
-                              console.log('回复内容', err);
-                              newClient.talk('暂时无法回答，请联系本人解答');
-                            });
-                        }
+        getSignature().then((response: any) => {
+          // 获取signature
+          signatureRef.current = response?.data?.signature;
+          console.log('获取的signature', signatureRef.current);
+          if (!client) {
+            const newClient = new window.RTCInteraction({
+              mountClass: 'content',
+              signature: signatureRef.current,
+              projectId: 'ec458327-02fb-11ef-a49e-1d85fe26a7cf',
+              onError(errorCode: number, errorMessage: string) {
+                console.log(errorCode, errorMessage);
+              },
+              onInited() {
+                console.log('inited...');
+                newClient.startRTC();
+                if (!asr) {
+                  const newAsr = new window.AsrSDK({
+                    onSentenceEnd: function (res: any) {
+                      let query = res?.result?.voice_text_str;
+                      console.log('识别到文本', query);
+                      if (
+                        !query ||
+                        query.trim() === '' ||
+                        query.trim().length < 2 ||
+                        query.trim() === '嗯。'
+                      ) {
+                        console.log('暂不能回答问题');
+                        return;
                       }
-                    });
-                    setAsr(newAsr);
-                  }
-                },
-                onTalkStart(talkRes: any) {
-                  if (asr) {
-                    asr.stop();
-                  }
-                  console.log('onTalkStart', '暂停识别');
-                },
-                onStopStream() {
-                  if (asr) {
-                    asr.stop();
-                  }
-                  console.log('暂停识别');
-                },
-                onTalkEnd(talkRes: any) {
-                  console.log('signature: ', signatureRef.current);
-                  if (asr) {
-                    asr.start(signatureRef.current);
-                  }
-                  console.log('onTalkEnd', '开始识别');
+                      // const answer = onSentenceEndCallback(query.trim())
+                      if (newClient) {
+                        console.log('onSentenceEnd', '暂停识别');
+                        newAsr.stop();
+                        chat(query)
+                          .then((resp) => {
+                            console.log(resp);
+                            newClient.talk(resp?.message);
+                          })
+                          .catch((err) => {
+                            console.log('回复内容', err);
+                            newClient.talk('暂时无法回答，请联系本人解答');
+                          });
+                      }
+                    }
+                  });
+                  setAsr(newAsr);
                 }
-              });
-              setClient(newClient);
-            }
-          })
-          .catch((error) => {
-            console.log(error);
-          });
+              },
+              onTalkStart(talkRes: any) {
+                if (asr) {
+                  asr.stop();
+                }
+                console.log('onTalkStart', '暂停识别');
+              },
+              onStopStream() {
+                if (asr) {
+                  asr.stop();
+                }
+                console.log('暂停识别');
+              },
+              onTalkEnd(talkRes: any) {
+                console.log('signature: ', signatureRef.current);
+                if (asr) {
+                  asr.start(signatureRef.current);
+                }
+                console.log('onTalkEnd', '开始识别');
+              }
+            });
+            setClient(newClient);
+          }
+        });
       }
     }, [client, asr, signatureRef]);
     if (navigator?.mediaDevices) {

@@ -32,3 +32,5 @@ export const getAssistantById = (id: string) =>
  */
 export const putAssistantById = (id: string, data: AssistantUpdateParams) =>
   PUT(`/core/assistant/update?assistantId=${id}`, data);
+
+export const getSignature = () => GET(`/core/assistant/signature`);
