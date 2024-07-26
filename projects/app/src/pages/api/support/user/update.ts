@@ -5,6 +5,8 @@ import { MongoUser } from '@fastgpt/service/support/user/schema';
 import { UpdateUserParams } from '@fastgpt/global/support/user/api';
 import { hashStr } from '@fastgpt/global/common/string/tools';
 import { MongoTeamMember } from '@fastgpt/service/support/user/team/teamMemberSchema';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
+import { authUserRole } from '@fastgpt/service/support/permission/auth/user';
 
 /* 获取我的模型 */
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
@@ -14,6 +16,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       req.body as UpdateUserParams;
     if (!_id) {
       throw new Error('userId is empty');
+    }
+    const userRole = await authUserRole({ req, authToken: true });
+    if (userRole.role !== TeamMemberRoleEnum.superAdmin) {
+      throw new Error('Permission denied');
     }
     const user = await MongoUser.findOne({ _id });
     if (!user) {

@@ -15,7 +15,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       throw new Error('参数错误');
     }
     const { tmbId, role } = await authUserRole({ req, authToken: true });
-    console.log(role, TeamMemberRoleEnum.superAdmin);
     if (role !== TeamMemberRoleEnum.superAdmin) {
       throw Error('权限不足');
     }

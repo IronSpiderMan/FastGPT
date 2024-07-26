@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Box, Flex, Button, useDisclosure } from '@chakra-ui/react';
 import { AddIcon } from '@chakra-ui/icons';
 import { serviceSideProps } from '@/web/common/utils/i18n';
@@ -8,6 +8,9 @@ import CreateModal from './components/CreateModal';
 import UserTable from '@/pages/user/list/components/UserTable';
 import { useQuery } from '@tanstack/react-query';
 import { getUsers } from '@/web/support/user/api';
+import { useUserStore } from '@/web/support/user/useUserStore';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
+import { useRouter } from 'next/router';
 
 const Users = () => {
   const { t } = useTranslation();
@@ -17,6 +20,13 @@ const Users = () => {
     onOpen: onOpenCreateModal,
     onClose: onCloseCreateModal
   } = useDisclosure();
+  const { userInfo } = useUserStore();
+  const router = useRouter();
+  useEffect(() => {
+    if (userInfo?.team?.role !== TeamMemberRoleEnum.superAdmin) {
+      router.push('/app/list');
+    }
+  }, [router, userInfo]);
   const { refetch } = useQuery(['getUsers'], () => getUsers());
   return (
     <PageContainer isLoading={isLoading} insertProps={{ px: [5, '48px'] }}>

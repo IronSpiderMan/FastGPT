@@ -259,11 +259,18 @@ function EditUserModal({
   // update user info
   const onSubmit = async (data: UpdateUserParams) => {
     setIsLoading(true);
-    await updateUserDetail(data);
-    toast({
-      title: t('common.success.Update successful'),
-      status: 'success'
-    });
+    try {
+      await updateUserDetail(data);
+      toast({
+        title: t('common.success.Update successful'),
+        status: 'success'
+      });
+    } catch (error: any) {
+      toast({
+        title: error?.message,
+        status: 'error'
+      });
+    }
     onClose();
     refetch(); // 刷新数据
     setIsLoading(false);

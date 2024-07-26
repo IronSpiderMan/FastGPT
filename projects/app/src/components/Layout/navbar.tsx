@@ -9,9 +9,7 @@ import Badge from '../Badge';
 import Avatar from '../Avatar';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import { useTranslation } from 'next-i18next';
-import { useSystemStore } from '@/web/common/system/useSystemStore';
-import MyTooltip from '../MyTooltip';
-import { getDocPath } from '@/web/common/system/doc';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 
 export enum NavbarTypeEnum {
   normal = 'normal',
@@ -22,10 +20,9 @@ const Navbar = ({ unread }: { unread: number }) => {
   const { t } = useTranslation();
   const router = useRouter();
   const { userInfo } = useUserStore();
-  const { gitStar, feConfigs } = useSystemStore();
   const { lastChatAppId, lastChatId } = useChatStore();
-  const navbarList = useMemo(
-    () => [
+  const navbarList = useMemo(() => {
+    const list = [
       {
         label: t('navbar.Chat'),
         icon: 'core/chat/chatLight',
@@ -41,27 +38,6 @@ const Navbar = ({ unread }: { unread: number }) => {
         activeLink: ['/app/list', '/app/detail']
       },
       {
-        label: t('assistant.Assistant'),
-        icon: 'core/assistant/assistantLight',
-        activeIcon: 'core/assistant/assistantFill',
-        link: '/assistant/list',
-        activeLink: ['/assistant/list', 'assistant/detail']
-      },
-      {
-        label: t('user.User'),
-        icon: 'core/user/userLight',
-        activeIcon: 'core/user/userFill',
-        link: '/user/list',
-        activeLink: ['/user/list']
-      },
-      // {
-      //   label: t('navbar.Plugin'),
-      //   icon: 'common/navbar/pluginLight',
-      //   activeIcon: 'common/navbar/pluginFill',
-      //   link: `/plugin/list`,
-      //   activeLink: ['/plugin/list', '/plugin/edit']
-      // },
-      {
         label: t('navbar.Datasets'),
         icon: 'core/dataset/datasetLight',
         activeIcon: 'core/dataset/datasetFill',
@@ -75,9 +51,25 @@ const Navbar = ({ unread }: { unread: number }) => {
         link: '/account',
         activeLink: ['/account']
       }
-    ],
-    [lastChatAppId, lastChatId, t]
-  );
+    ];
+    if (userInfo?.team?.role === TeamMemberRoleEnum.superAdmin) {
+      list.splice(2, 0, {
+        label: t('assistant.Assistant'),
+        icon: 'core/assistant/assistantLight',
+        activeIcon: 'core/assistant/assistantFill',
+        link: '/assistant/list',
+        activeLink: ['/assistant/list', '/assistant/detail']
+      });
+      list.splice(3, 0, {
+        label: t('user.User'),
+        icon: 'core/user/userLight',
+        activeIcon: 'core/user/userFill',
+        link: '/user/list',
+        activeLink: ['/user/list']
+      });
+    }
+    return list;
+  }, [lastChatAppId, lastChatId, t, userInfo]);
 
   const itemStyles: BoxProps & LinkProps = {
     my: 3,
@@ -177,35 +169,6 @@ const Navbar = ({ unread }: { unread: number }) => {
           </Link>
         </Box>
       )}
-      {/*{(feConfigs?.docUrl || feConfigs?.chatbotUrl) && (*/}
-      {/*  <MyTooltip label={t('common.system.Use Helper')} placement={'right-end'}>*/}
-      {/*    <Link*/}
-      {/*      {...itemStyles}*/}
-      {/*      {...hoverStyle}*/}
-      {/*      href={feConfigs?.chatbotUrl || getDocPath('/docs/intro')}*/}
-      {/*      target="_blank"*/}
-      {/*      mb={0}*/}
-      {/*      color={'myGray.500'}*/}
-      {/*    >*/}
-      {/*      <MyIcon name={'common/courseLight'} width={'24px'} height={'24px'} />*/}
-      {/*    </Link>*/}
-      {/*  </MyTooltip>*/}
-      {/*)}*/}
-      {/*{feConfigs?.show_git && (*/}
-      {/*  <MyTooltip label={`Git Star: ${gitStar}`} placement={'right-end'}>*/}
-      {/*    <Link*/}
-      {/*      as={NextLink}*/}
-      {/*      href="https://github.com/labring/FastGPT"*/}
-      {/*      target={'_blank'}*/}
-      {/*      {...itemStyles}*/}
-      {/*      {...hoverStyle}*/}
-      {/*      mt={0}*/}
-      {/*      color={'myGray.500'}*/}
-      {/*    >*/}
-      {/*      <MyIcon name={'common/gitInlight'} width={'26px'} height={'26px'} />*/}
-      {/*    </Link>*/}
-      {/*  </MyTooltip>*/}
-      {/*)}*/}
     </Flex>
   );
 };

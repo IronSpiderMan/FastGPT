@@ -4,10 +4,16 @@ import { MongoUser } from '@fastgpt/service/support/user/schema';
 import { connectToDatabase } from '@/service/mongo';
 import { UserListItemType } from '@fastgpt/global/support/user/type';
 import { MongoTeamMember } from '@fastgpt/service/support/user/team/teamMemberSchema';
+import { authUserRole } from '@fastgpt/service/support/permission/auth/user';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse) {
   try {
     await connectToDatabase();
+    const { role } = await authUserRole({ req, authToken: true });
+    if (role !== TeamMemberRoleEnum.superAdmin) {
+      throw new Error('Permission denied');
+    }
     const users = await MongoUser.aggregate([
       {
         $lookup: {
