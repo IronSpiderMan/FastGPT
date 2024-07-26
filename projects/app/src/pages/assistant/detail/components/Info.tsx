@@ -13,6 +13,8 @@ import MyTooltip from '@/components/MyTooltip';
 import Avatar from '@/components/Avatar';
 import { useRouter } from 'next/router';
 import { useLoading } from '@/web/common/hooks/useLoading';
+import type { UserType } from '@fastgpt/global/support/user/type';
+import { AssistantDetailType } from '@fastgpt/global/core/assistant/type';
 
 type FormType = {
   avatar: string;
@@ -29,6 +31,7 @@ const AssistantInfo = () => {
   const { assistantDetail, updateAssistantDetail } = useAssistantStore();
   const { isPc } = useSystemStore();
   const {
+    reset,
     register,
     setValue,
     getValues,
@@ -50,6 +53,19 @@ const AssistantInfo = () => {
     fileType: '.jpg,.png',
     multiple: false
   });
+  const onclickSave = useCallback(
+    async (data: AssistantDetailType) => {
+      await updateAssistantDetail(assistantId, {
+        avatar: data.avatar
+      });
+      reset(data);
+      toast({
+        title: '更新数据成功',
+        status: 'success'
+      });
+    },
+    [reset, toast, updateAssistantDetail]
+  );
 
   useEffect(() => {
     setValue('avatar', assistantDetail.avatar);
@@ -71,10 +87,10 @@ const AssistantInfo = () => {
           maxH: 300
         });
 
-        // onclickSave({
-        //   ...assistantDetail,
-        //   avatar: src
-        // });
+        await onclickSave({
+          ...assistantDetail,
+          avatar: src
+        });
       } catch (err: any) {
         toast({
           title: typeof err === 'string' ? err : t('common.error.Select avatar failed'),
@@ -82,7 +98,7 @@ const AssistantInfo = () => {
         });
       }
     },
-    [t, toast, assistantDetail]
+    [onclickSave, t, toast, assistantDetail]
   );
 
   const onSubmit = async (data: FormType) => {

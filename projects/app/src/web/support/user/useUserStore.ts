@@ -2,14 +2,20 @@ import { create } from 'zustand';
 import { devtools, persist } from 'zustand/middleware';
 import { immer } from 'zustand/middleware/immer';
 import type { UserUpdateParams } from '@/types/user';
-import type { UserType } from '@fastgpt/global/support/user/type.d';
+import type { UserListItemType, UserType } from '@fastgpt/global/support/user/type.d';
 import { getTokenLogin, putUserInfo } from '@/web/support/user/api';
 import { FeTeamPlanStatusType } from '@fastgpt/global/support/wallet/sub/type';
 import { getTeamPlanStatus } from './team/api';
-import { useSystemStore } from '@/web/common/system/useSystemStore';
+import { getUsers, putUser, getUserById } from '@/web/support/user/api';
+import { UpdateUserParams } from '@fastgpt/global/support/user/api';
 
 type State = {
+  users: UserListItemType[];
+  loadUsers: (init?: boolean) => Promise<UserListItemType[]>;
   userInfo: UserType | null;
+  userDetail: UpdateUserParams;
+  loadUserDetail: (id: string, init?: boolean) => Promise<UserListItemType>;
+  updateUserDetail(data: UpdateUserParams): Promise<void>;
   initUserInfo: () => Promise<UserType>;
   setUserInfo: (user: UserType | null) => void;
   updateUserInfo: (user: UserUpdateParams) => Promise<void>;
@@ -22,6 +28,16 @@ export const useUserStore = create<State>()(
     persist(
       immer((set, get) => ({
         userInfo: null,
+        users: [],
+        userDetail: null,
+        async loadUsers(init = true) {
+          if (get().users.length > 0 && !init) return [];
+          const res = await getUsers();
+          set((state) => {
+            state.users = res;
+          });
+          return res;
+        },
         async initUserInfo() {
           get().initTeamPlanStatus();
 
@@ -58,6 +74,23 @@ export const useUserStore = create<State>()(
             });
             return Promise.reject(error);
           }
+        },
+        async loadUserDetail(id: string, init = false) {
+          if (id === get().userDetail._id && !init) return get().userDetail;
+          const res = await getUserById(id);
+          set((state) => {
+            state.userDetail = res;
+          });
+          return res;
+        },
+        async updateUserDetail(data: UpdateUserParams) {
+          await putUser(data);
+          set((state) => {
+            state.userDetail = {
+              ...state.userDetail,
+              ...data
+            };
+          });
         },
         teamPlanStatus: null,
         initTeamPlanStatus() {

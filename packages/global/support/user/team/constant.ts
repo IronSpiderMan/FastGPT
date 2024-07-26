@@ -3,11 +3,24 @@ export const TeamMemberCollectionName = 'team.members';
 export const TeamTagsCollectionName = 'team.tags';
 
 export enum TeamMemberRoleEnum {
+  superAdmin = 'superAdmin',
   owner = 'owner',
   admin = 'admin',
   visitor = 'visitor'
 }
+
+export const TeamMemberRoles = [
+  { label: 'superAdmin', value: 'superAdmin' },
+  { label: 'owner', value: 'owner' },
+  { label: 'admin', value: 'admin' },
+  { label: 'visitor', value: 'visitor' }
+];
+
 export const TeamMemberRoleMap = {
+  [TeamMemberRoleEnum.superAdmin]: {
+    value: TeamMemberRoleEnum.owner,
+    label: 'user.team.role.Owner'
+  },
   [TeamMemberRoleEnum.owner]: {
     value: TeamMemberRoleEnum.owner,
     label: 'user.team.role.Owner'

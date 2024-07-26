@@ -1,5 +1,6 @@
 import { InformTypeEnum, UserStatusEnum } from './constant';
 import { TeamItemType } from './team/type';
+import { TeamMemberRoleEnum } from './team/constant';
 
 export type UserModelSchema = {
   _id: string;
@@ -18,6 +19,20 @@ export type UserModelSchema = {
     key: string;
     baseUrl: string;
   };
+};
+
+export type UserListItemType = {
+  _id: string;
+  username: string;
+  avatar: string;
+  balance: number;
+  promotionRate: number;
+  status: `${UserStatusEnum}`;
+  openaiAccount?: {
+    key: string;
+    baseUrl: string;
+  };
+  role: `${TeamMemberRoleEnum}`;
 };
 
 export type UserType = {

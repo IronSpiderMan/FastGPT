@@ -11,6 +11,11 @@ export const userStatusMap = {
   }
 };
 
+export const userStatus = [
+  { label: 'active', value: 'active' },
+  { label: 'forbidden', value: 'forbidden' }
+];
+
 export enum OAuthEnum {
   github = 'github',
   google = 'google',

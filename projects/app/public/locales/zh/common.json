@@ -66,6 +66,7 @@
     },
     "All Assistants": "数字人"
   },
+
   "common": {
     "Add": "添加",
     "Add New": "新增",
@@ -1410,6 +1411,21 @@
     "Quote Prompt Tip": "该配置只在知识库搜索时生效。\n可以用 {{quote}} 来插入引用内容模板，使用 {{question}} 来插入问题。下面是默认值：\n{{default}}"
   },
   "user": {
+    "Manage": {
+      "Create User": "创建用户"
+    },
+    "Edit": {
+      "Edit User": "编辑用户",
+      "UserName": "用户名",
+      "Password": "密码",
+      "Balance": "Balance",
+      "Promotion Rate": "Promotion Rate",
+      "Status": "状态",
+      "OpenAI Account": "OpenAI 账户",
+      "Role": "角色"
+    },
+    "User": "用户",
+    "Manage User": "用户管理",
     "Add User": "添加用户",
     "Account": "账号",
     "Amount of earnings": "收益（￥）",
@@ -1515,7 +1531,8 @@
         "Member": "成员",
         "Owner": "创建者",
         "Update to Visitor": "修改成访客",
-        "Visitor": "访客"
+        "Visitor": "访客",
+        "SuperAdmin": "超级管理员"
       }
     }
   }

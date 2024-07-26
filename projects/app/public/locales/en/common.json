@@ -1408,6 +1408,21 @@
     "Quote Prompt Tip": "This configuration takes effect only when the knowledge base is searched.\nYou can use {{quote}} to insert the reference content template and {{question}} to insert the question. Here are the default values:\n{{default}}"
   },
   "user": {
+    "Manage": {
+      "Create User": "Create User"
+    },
+    "Edit": {
+      "Edit User": "Edit User",
+      "UserName": "Username",
+      "Password": "Password",
+      "Balance": "Balance",
+      "Promotion Rate": "Promotion Rate",
+      "Status": "Status",
+      "OpenAI Account": "OpenAI Account",
+      "Role": "Role"
+    },
+    "User": "User",
+    "Manage User": "Manage User",
     "Account": "Account",
     "Amount of earnings": "Earnings",
     "Amount of inviter": "Inviter",
@@ -1512,7 +1527,8 @@
         "Member": "Member",
         "Owner": "Owner",
         "Update to Visitor": "Set to visitor",
-        "Visitor": "Visitor"
+        "Visitor": "Visitor",
+        "SuperAdmin": "Super Admin"
       }
     }
   }

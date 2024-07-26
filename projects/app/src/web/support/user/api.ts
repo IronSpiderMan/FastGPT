@@ -1,13 +1,15 @@
-import { GET, POST, PUT } from '@/web/common/api/request';
+import { DELETE, GET, POST, PUT } from '@/web/common/api/request';
 import { hashStr } from '@fastgpt/global/common/string/tools';
 import type { ResLogin } from '@/global/support/api/userRes.d';
 import { UserAuthTypeEnum } from '@fastgpt/global/support/user/auth/constants';
 import { UserUpdateParams } from '@/types/user';
-import { UserType } from '@fastgpt/global/support/user/type.d';
+import { UserType, UserListItemType } from '@fastgpt/global/support/user/type.d';
 import type {
+  CreateUserParams,
   FastLoginProps,
   OauthLoginProps,
-  PostLoginProps
+  PostLoginProps,
+  UpdateUserParams
 } from '@fastgpt/global/support/user/api.d';
 import { GetWXLoginQRResponse } from '@fastgpt/global/support/user/login/api.d';
 
@@ -81,3 +83,14 @@ export const getWXLoginResult = (code: string) =>
 
 export const postUser = (username: string, password: string) =>
   POST('/support/user/account/addUser', { username: username, password: password });
+
+export const getUsers = () => GET<UserListItemType[]>('/support/user/list');
+
+export const postCreateUser = (data: CreateUserParams) =>
+  POST<string>('/support/user/create', data);
+
+export const delUserById = (id: string) => DELETE(`/support/user/del?userId=${id}`);
+
+export const putUser = (data: UpdateUserParams) => PUT(`/support/user/update`, data);
+
+export const getUserById = (id: string) => PUT(`/support/user?userId=${id}`);

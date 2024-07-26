@@ -42,10 +42,17 @@ const Navbar = ({ unread }: { unread: number }) => {
       },
       {
         label: t('assistant.Assistant'),
-        icon: 'core/app/aiLight',
-        activeIcon: 'core/app/aiFill',
+        icon: 'core/assistant/assistantLight',
+        activeIcon: 'core/assistant/assistantFill',
         link: '/assistant/list',
         activeLink: ['/assistant/list', 'assistant/detail']
+      },
+      {
+        label: t('user.User'),
+        icon: 'core/user/userLight',
+        activeIcon: 'core/user/userFill',
+        link: '/user/list',
+        activeLink: ['/user/list']
       },
       // {
       //   label: t('navbar.Plugin'),
