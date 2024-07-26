@@ -354,8 +354,10 @@ function EditUserModal({
               list={userStatus}
               value={selectedStatus}
               onchange={(e) => {
+                console.log(selectedStatus, e);
                 setSelectedStatus(e);
-                setValue('status', e);
+                console.log(selectedStatus, e);
+                setValue('status', e, { shouldDirty: true });
               }}
               {...register('status', {
                 required: t('core.app.error.App name can not be empty')
@@ -372,7 +374,7 @@ function EditUserModal({
               value={selectedRole}
               onchange={(e) => {
                 setSelectedRole(e);
-                setValue('role', e);
+                setValue('role', e, { shouldDirty: true });
               }}
               {...register('role', {
                 required: t('core.app.error.App name can not be empty')
