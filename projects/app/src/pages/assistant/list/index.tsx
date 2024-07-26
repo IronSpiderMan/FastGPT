@@ -14,12 +14,20 @@ import Avatar from '@/components/Avatar';
 import MyTooltip from '@/components/MyTooltip';
 import CreateModal from './components/CreateModal';
 import { useAssistantStore } from '@/web/core/assistant/store/useAssistantStore';
+import { useUserStore } from '@/web/support/user/useUserStore';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 
 const Assistants = () => {
   const { toast } = useToast();
   const { t } = useTranslation();
   const router = useRouter();
   const { assistants, loadAssistants } = useAssistantStore();
+  const { userInfo } = useUserStore();
+  useEffect(() => {
+    if (userInfo?.team?.role !== TeamMemberRoleEnum.superAdmin) {
+      router.push('/app/list');
+    }
+  }, [router, userInfo]);
   const { openConfirm, ConfirmModal } = useConfirm({
     title: '删除提示',
     content: '确认删除该应用所有信息？'

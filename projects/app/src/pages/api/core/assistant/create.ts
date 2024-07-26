@@ -3,25 +3,21 @@ import { jsonRes } from '@fastgpt/service/common/response';
 import { connectToDatabase } from '@/service/mongo';
 import type { CreateAssistantParams } from '@fastgpt/global/core/assistant/api';
 import { MongoAssistant } from '@fastgpt/service/core/assistant/schema';
-import { authUserNotVisitor } from '@fastgpt/service/support/permission/auth/user';
-import { checkTeamAppLimit } from '@fastgpt/service/support/permission/teamLimit';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
+import { authUserRole } from '@fastgpt/service/support/permission/auth/user';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
-    const { name = 'APP', avatar, title, intro, projectId } = req.body as CreateAssistantParams;
-
+    const { name = '博士', avatar, title, intro, projectId } = req.body as CreateAssistantParams;
     if (!name) {
       throw new Error('缺少参数');
     }
-
-    // 凭证校验
-    const { teamId, tmbId } = await authUserNotVisitor({ req, authToken: true });
-
-    // 上限校验
-    await checkTeamAppLimit(teamId);
-
-    // 创建模型
+    const { teamId, tmbId, role } = await authUserRole({ req, authToken: true });
+    if (role !== TeamMemberRoleEnum.superAdmin) {
+      throw new Error('Permission denied');
+    }
+    // 创建数字人
     const response = await MongoAssistant.create({
       avatar,
       name,

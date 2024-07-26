@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useCallback } from 'react';
+import React, { useEffect } from 'react';
 import { useRouter } from 'next/router';
 import { Box, Flex, IconButton, useTheme } from '@chakra-ui/react';
 import { useToast } from '@fastgpt/web/hooks/useToast';
@@ -11,8 +11,9 @@ import { serviceSideProps } from '@/web/common/utils/i18n';
 import { useAssistantStore } from '@/web/core/assistant/store/useAssistantStore';
 import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
-import { useLoading } from '@/web/common/hooks/useLoading';
 import AssistantInfo from '@/pages/assistant/detail/components/Info';
+import { useUserStore } from '@/web/support/user/useUserStore';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 
 enum TabEnum {
   'simpleEdit' = 'simpleEdit',
@@ -29,6 +30,15 @@ const AssistantDetail = () => {
   const { toast } = useToast();
   const { assistantId } = router.query as { assistantId: string };
   const { assistantDetail, loadAssistantDetail } = useAssistantStore();
+  const { userInfo } = useUserStore();
+  useEffect(() => {
+    if (userInfo?.team?.role !== TeamMemberRoleEnum.superAdmin) {
+      router.push('/app/list');
+    }
+    if (!assistantId) {
+      router.push('/assistant/list');
+    }
+  }, [router, userInfo, assistantId]);
   useEffect(() => {
     const listen =
       process.env.NODE_ENV === 'production'

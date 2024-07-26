@@ -33,7 +33,8 @@ import { useUserStore } from '@/web/support/user/useUserStore';
 import { UpdateUserParams } from '@fastgpt/global/support/user/api';
 import MySelect from '@/components/Select';
 import { userStatus } from '@fastgpt/global/support/user/constant';
-import { TeamMemberRoles } from '@fastgpt/global/support/user/team/constant';
+import { TeamMemberRoleEnum, TeamMemberRoles } from '@fastgpt/global/support/user/team/constant';
+import { useRouter } from 'next/router';
 
 const UserTable = ({
   isLoading,
@@ -45,6 +46,13 @@ const UserTable = ({
   const { t } = useTranslation();
   const [editData, setEditData] = useState<UpdateUserParams>();
   const { toast } = useToast();
+  const { userInfo } = useUserStore();
+  const router = useRouter();
+  useEffect(() => {
+    if (userInfo?.team?.role !== TeamMemberRoleEnum.superAdmin) {
+      router.push('/app/list');
+    }
+  }, [router, userInfo]);
   const { mutate: onclickRemove, isLoading: isDeleting } = useMutation({
     mutationFn: async (id: string) => delUserById(id),
     onSuccess() {
