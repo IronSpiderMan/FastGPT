@@ -5,6 +5,7 @@ import { AppSchema, AppSimpleEditFormType } from './type';
 export type CreateAppParams = {
   name?: string;
   avatar?: string;
+  assistantId?: string;
   type?: `${AppTypeEnum}`;
   modules: AppSchema['modules'];
 };
@@ -15,6 +16,7 @@ export interface AppUpdateParams {
   simpleTemplateId?: string;
   avatar?: string;
   intro?: string;
+  assistantId?: string;
   modules?: AppSchema['modules'];
   permission?: AppSchema['permission'];
   teamTags?: AppSchema['teamTags'];

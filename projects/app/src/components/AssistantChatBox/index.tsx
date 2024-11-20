@@ -21,7 +21,6 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Box,
-  Button,
   Center,
   CircularProgress,
   Flex
@@ -39,7 +38,8 @@ import { splitGuideModule } from '@fastgpt/global/core/module/utils';
 import MessageInput from '@/components/ChatBox/MessageInput';
 import { ModuleOutputKeyEnum } from '@fastgpt/global/core/module/constants';
 import { OutLinkChatAuthProps } from '@fastgpt/global/support/permission/chat';
-import axios from 'axios';
+import { useAppStore } from '@/web/core/app/store/useAppStore';
+import { useQuery } from '@tanstack/react-query';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 24);
 
@@ -119,58 +119,27 @@ const AssistantChatBox = (
   const chatController = useRef(new AbortController());
   const isNewChatReplace = useRef(false);
   const [chatHistory, setChatHistory] = useState<ChatSiteItemType[]>([]);
-  const signatureRef = useRef('');
-  const [client, setClient] = useState<any>(null);
+  const avatarWsRef = useRef(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
-  const [isConnected, setIsConnected] = useState<boolean>(true);
   const cancelRef = React.useRef(null);
+  const { appDetail, loadAppDetail } = useAppStore();
+  const [avatarId, setAvatarId] = useState<string>('');
 
-  // EndRTC before client destroy.
-  useEffect(() => {
-    return () => {
-      if (client) {
-        client.endRTC();
-      }
-    };
-  }, [client]);
-
-  // start RTC
-  useEffect(() => {
-    if (!signatureRef.current) {
-      axios
-        .get('https://interactive-virtualhuman.xiaoice.com/openapi/signature/gen', {
-          headers: {
-            'Content-Type': 'application/json',
-            'subscription-key': 'e4fea774231a4865b524c14d67255223'
-          }
-        })
-        .then((response) => {
-          signatureRef.current = response.data.data;
-          if (!client) {
-            const newClient = new window.RTCInteraction({
-              mountClass: 'content',
-              signature: signatureRef.current,
-              timeout: 60 * 1000 * 5,
-              projectId: '8720e05c-4810-11ef-8185-15e4c5cfd30b',
-              onError(errorCode: number, errorMessage: string) {
-                console.log(errorCode, errorMessage);
-              },
-              onInited() {
-                console.log('inited...');
-                newClient.startRTC();
-              },
-              onTalkStart(talkRes: any) {},
-              onStopStream() {
-                console.log('OnStopStream');
-                setIsConnected(false);
-              },
-              onTalkEnd(talkRes: any) {}
-            });
-            setClient(newClient);
-          }
-        });
+  useQuery([appId], () => loadAppDetail(appId ? appId : '', true), {
+    onError(err: any) {
+      toast({
+        title: err?.message || t('core.app.error.Get app failed'),
+        status: 'error'
+      });
+      router.replace('/app/list');
+    },
+    onSuccess(data: any) {
+      console.log('App Detail', data);
+      // console.log(data.assistant.projectId)
+      setAvatarId(data.assistant.projectId);
     }
-  }, [client, signatureRef]);
+  });
+
   const isChatting = useMemo(
     () =>
       chatHistory[chatHistory.length - 1] &&
@@ -361,7 +330,7 @@ const AssistantChatBox = (
           console.log('回答内容：');
           console.log(responseText);
           console.log('===============================================================');
-          client.talk(responseText);
+          avatarWsRef.current.talk(responseText);
 
           // set finish status
           setChatHistory((state) =>
@@ -425,15 +394,10 @@ const AssistantChatBox = (
       });
     },
     start: () => {
-      if (client) {
-        client.startRTC();
-      }
+      console.log('start');
     },
     stop: () => {
-      if (client) {
-        client.endRTC();
-      }
-      window.location.reload();
+      console.log('end');
     }
   }));
 
@@ -445,34 +409,42 @@ const AssistantChatBox = (
     };
   }, [router.query]);
 
-  // listen the visibility of the assistant
-  // 选择要观察的目标节点
-  const targetNode = document.body;
-  // 配置观察器选项（检测子节点的变化）
-  const config = { childList: true, subtree: true };
-  // 创建一个新的观察器实例，并指定触发时的回调函数
-  const observer = new MutationObserver(function (mutationsList, observer) {
-    // 在每次发生变化时遍历所有变化
-    for (let mutation of mutationsList) {
-      // 如果新增节点是我们感兴趣的类别
-      if (mutation.type === 'childList' && mutation.addedNodes.length > 0) {
-        mutation.addedNodes.forEach(function (node: any) {
-          if (node.nodeType === Node.ELEMENT_NODE && node?.classList.contains('show-video')) {
-            // 在此处执行处理函数，因为已经找到了 class 为 show-video 的元素
-            console.log('show-video 元素已出现！');
-            setIsLoading(false);
-            // 停止观察以避免进一步触发
-            observer.disconnect();
-          }
-        });
-      }
+  useEffect(() => {
+    console.log('useEffect中：', avatarId);
+    if (avatarId) {
+      avatarWsRef.current.connect(avatarId);
     }
-  });
-  // 开始观察目标节点，并配置观察器选项
-  observer.observe(targetNode, config);
+  }, [avatarId]);
+
+  useEffect(() => {
+    setIsLoading(false);
+    if (typeof window !== 'undefined' && window?.AvatarWebsocket) {
+      avatarWsRef.current = new window.AvatarWebsocket(
+        // 'content', 'https://hat-assistant-nffiot.hkust-gz.edu.cn/wav2lip/api/v1',
+        'content',
+        'localhost:8080/api/v1',
+        {
+          onClose: () => {
+            console.log('数字人停了');
+          },
+          onReady: () => {
+            console.log('连接成功');
+            setIsLoading(false);
+          }
+        },
+        false
+      );
+    }
+    return () => {
+      if (avatarWsRef.current) {
+        avatarWsRef.current?.close();
+      }
+    };
+  }, []);
 
   return (
     <Flex flexDirection={'column'} h={'100%'}>
+      {/*<Script src='/js/avatar_websocket.js' strategy="lazyOnload"></Script>*/}
       <Script src="/js/html2pdf.bundle.min.js" strategy="lazyOnload"></Script>
       <AlertDialog isOpen={isLoading} leastDestructiveRef={cancelRef} onClose={() => {}}>
         <AlertDialogOverlay>
@@ -493,29 +465,7 @@ const AssistantChatBox = (
       <Box ref={ChatBoxRef} flex={'1 0 0'} h={0} w={'100%'} overflow={'overlay'} px={[4, 0]} pb={3}>
         <Box id="chat-container" maxW={['100%', '92%']} h={'100%'} mx={'auto'}>
           <Center w="100%" h="100%">
-            <Button
-              style={{ display: !isConnected ? 'block' : 'none' }}
-              onClick={() => {
-                if (client) {
-                  client.startRTC();
-                }
-                setIsLoading(true);
-                setIsConnected(true);
-              }}
-            >
-              点击重新连接
-            </Button>
-            <Box
-              style={{ display: isConnected ? 'block' : 'none' }}
-              w="100%"
-              h="100%"
-              className="content"
-              onClick={() => {
-                if (client) {
-                  client.breakTalking();
-                }
-              }}
-            ></Box>
+            <Box id={'content'} h="400px" />
           </Center>
         </Box>
       </Box>

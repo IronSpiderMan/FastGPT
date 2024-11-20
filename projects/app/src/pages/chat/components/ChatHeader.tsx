@@ -11,16 +11,7 @@ import { useTranslation } from 'next-i18next';
 import { chatContentReplaceBlock } from '@fastgpt/global/core/chat/utils';
 import DigitalHumanSwitch from '@/components/DigitalHumanSwitch';
 
-const ChatHeader = ({
-  history,
-  appName,
-  appAvatar,
-  chatModels,
-  appId,
-  showHistory,
-  onOpenSlider,
-  onSwitchChange
-}: {
+interface ChatHeaderProps {
   history: ChatItemType[];
   appName: string;
   appAvatar: string;
@@ -28,19 +19,37 @@ const ChatHeader = ({
   appId?: string;
   showHistory?: boolean;
   onOpenSlider: () => void;
+  digitalHumanMode: boolean;
   onSwitchChange: (event: ChangeEvent<HTMLInputElement>) => void;
+}
+
+const ChatHeader: React.FC<ChatHeaderProps> = ({
+  history,
+  appName,
+  appAvatar,
+  chatModels,
+  appId,
+  showHistory,
+  onOpenSlider,
+  digitalHumanMode,
+  onSwitchChange
 }) => {
   const router = useRouter();
   const theme = useTheme();
   const { t } = useTranslation();
   const { isPc } = useSystemStore();
+
   const title = useMemo(
     () =>
       chatContentReplaceBlock(history[history.length - 2]?.value)?.slice(0, 8) ||
       appName ||
       t('core.chat.New Chat'),
-    [appName, history]
+    [appName, history, t]
   );
+
+  const handleSwitchChange = (event: ChangeEvent<HTMLInputElement>) => {
+    onSwitchChange(event);
+  };
 
   return (
     <Flex
@@ -82,7 +91,6 @@ const ChatHeader = ({
               onClick={onOpenSlider}
             />
           )}
-
           <Flex px={3} alignItems={'center'} flex={'1 0 0'} w={0} justifyContent={'center'}>
             <Avatar src={appAvatar} w={'16px'} />
             <Box
@@ -99,7 +107,7 @@ const ChatHeader = ({
       )}
       {/* control */}
       <ToolMenu history={history} />
-      <DigitalHumanSwitch onChange={onSwitchChange} />
+      <DigitalHumanSwitch checked={digitalHumanMode} onChange={handleSwitchChange} />
     </Flex>
   );
 };

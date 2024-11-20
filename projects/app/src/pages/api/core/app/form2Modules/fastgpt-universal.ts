@@ -69,6 +69,7 @@ function simpleChatTemplate(formData: AppSimpleEditFormType): ModuleItemType[] {
       moduleId: 'chatModule',
       name: 'AI 对话',
       avatar: '/imgs/module/AI.png',
+      assistantId: formData.aiSettings.assistantId,
       flowType: 'chatNode',
       showStatus: true,
       position: {
@@ -479,6 +480,7 @@ function datasetTemplate(formData: AppSimpleEditFormType): ModuleItemType[] {
       moduleId: 'chatModule',
       name: 'AI 对话',
       avatar: '/imgs/module/AI.png',
+      assistantId: formData.aiSettings.assistantId,
       flowType: 'chatNode',
       showStatus: true,
       position: {

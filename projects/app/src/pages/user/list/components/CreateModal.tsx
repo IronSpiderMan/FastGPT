@@ -171,6 +171,7 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               value={selectedStatus}
               onchange={(e) => {
                 setSelectedStatus(e);
+                setValue('status', e as `${UserStatusEnum}`);
               }}
               {...register('status', {
                 required: t('core.app.error.App name can not be empty')
@@ -187,6 +188,7 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               value={selectedRole}
               onchange={(e) => {
                 setSelectedRole(e);
+                setValue('role', e as `${TeamMemberRoleEnum}`);
               }}
               {...register('role', {
                 required: t('core.app.error.App name can not be empty')

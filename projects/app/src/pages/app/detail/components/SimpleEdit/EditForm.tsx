@@ -1,4 +1,4 @@
-import React, { useMemo, useState, useTransition } from 'react';
+import React, { useEffect, useMemo, useRef, useState, useTransition } from 'react';
 import {
   Box,
   Flex,
@@ -35,6 +35,8 @@ import SelectAiModel from '@/components/Select/SelectAiModel';
 import PromptEditor from '@fastgpt/web/components/common/Textarea/PromptEditor';
 import { formatEditorVariablePickerIcon } from '@fastgpt/global/core/module/utils';
 import SearchParamsTip from '@/components/core/dataset/SearchParamsTip';
+import { useAssistantStore } from '@/web/core/assistant/store/useAssistantStore';
+import MySelect from '@/components/Select';
 
 const DatasetSelectModal = dynamic(() => import('@/components/core/module/DatasetSelectModal'));
 const DatasetParamsModal = dynamic(() => import('@/components/core/module/DatasetParamsModal'));
@@ -55,7 +57,9 @@ const EditForm = ({
   const router = useRouter();
   const { t } = useTranslation();
   const { appDetail, updateAppDetail } = useAppStore();
+  const [assistantId, setAssistantId] = useState('');
   const { loadAllDatasets, allDatasets } = useDatasetStore();
+  const { loadAssistants, assistants } = useAssistantStore();
   const { isPc, llmModelList, reRankModelList } = useSystemStore();
   const [refresh, setRefresh] = useState(false);
   const [, startTst] = useTransition();
@@ -64,6 +68,16 @@ const EditForm = ({
     useForm<AppSimpleEditFormType>({
       defaultValues: getDefaultAppForm()
     });
+
+  /* 加载模型 */
+  const { isFetching } = useQuery(['loadAssistants'], () => loadAssistants(true), {
+    refetchOnMount: true
+  });
+  const assistantSelectList = (() =>
+    assistants.map((item) => ({
+      value: item._id,
+      label: item.name
+    })))();
 
   const { fields: datasets, replace: replaceKbList } = useFieldArray({
     control,
@@ -132,6 +146,7 @@ const EditForm = ({
       const formatVal = appModules2Form({
         modules: appDetail.modules
       });
+      setAssistantId(appDetail.assistantId);
       reset(formatVal);
       setRefresh(!refresh);
       return formatVal;
@@ -256,6 +271,21 @@ const EditForm = ({
                         ?.maxResponse || 4000;
                     const token = maxToken / 2;
                     setValue('aiSettings.maxToken', token);
+                    setRefresh(!refresh);
+                  }}
+                />
+              </Box>
+            </Flex>
+            <Flex alignItems={'center'} mt={5}>
+              <Box {...LabelStyles}>{t('assistant.Assistant')}</Box>
+              <Box flex={'1 0 0'}>
+                <MySelect
+                  width={'100%'}
+                  value={assistantId || ''}
+                  list={assistantSelectList}
+                  onchange={(val: any) => {
+                    setAssistantId(val);
+                    setValue('aiSettings.assistantId', val);
                     setRefresh(!refresh);
                   }}
                 />

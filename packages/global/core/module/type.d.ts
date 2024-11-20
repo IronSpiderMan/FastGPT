@@ -35,6 +35,7 @@ export type ModuleItemType = {
   name: string;
   avatar?: string;
   intro?: string;
+  assistantId: string;
   moduleId: string;
   position?: {
     x: number;

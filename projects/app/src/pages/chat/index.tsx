@@ -9,8 +9,7 @@ import {
   Drawer,
   DrawerOverlay,
   DrawerContent,
-  useTheme,
-  SwitchProps
+  useTheme
 } from '@chakra-ui/react';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useQuery } from '@tanstack/react-query';
@@ -38,7 +37,6 @@ import { checkChatSupportSelectFileByChatModels } from '@/web/core/chat/utils';
 import { chatContentReplaceBlock } from '@fastgpt/global/core/chat/utils';
 import { ChatStatusEnum } from '@fastgpt/global/core/chat/constants';
 import Script from 'next/script';
-import DigitalHumanChatBox, { DigitalHumanChatBoxHandle } from '@/components/DigitalHumanChatBox';
 import AssistantChatBox, { type AssistantComponentRef } from '@/components/AssistantChatBox';
 
 const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
@@ -233,6 +231,10 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
       return;
     }
 
+    // 如果换了app就关闭数字人
+    if (appId != lastChatAppId) {
+      setIsDigitalHumanMode(false);
+    }
     // store id
     appId && setLastChatAppId(appId);
     setLastChatId(chatId);
@@ -250,20 +252,14 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
   });
 
   useQuery(['loadHistories', appId], () => (appId ? loadHistories({ appId }) : null));
-  const DigitalHumanChatBoxRef = useRef<DigitalHumanChatBoxHandle>(null);
   const [isDigitalHumanMode, setIsDigitalHumanMode] = useState<boolean>(false);
   const handleSwitchChange = (evnet: ChangeEvent<HTMLInputElement>) => {
     const checked: boolean = (event?.target as HTMLInputElement).checked;
     setIsDigitalHumanMode(checked);
     setChatHistoryForChatBox();
     if (!checked) {
-      // 关闭数字人
-      // DigitalHumanChatBoxRef.current.stop();
-      console.log('关闭数字人');
       AssistantChatBoxRef.current?.stop();
     } else {
-      console.log('开启数字人');
-      // 开启数字人
       setTimeout(() => {
         AssistantChatBoxRef.current?.start();
       }, 500);
@@ -288,16 +284,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
       }
     }, 500);
   };
-  const handleSentenceEnd = async (query: string) => {
-    return '你好啊';
-  };
-  useEffect(() => {
-    if (DigitalHumanChatBoxRef.current) {
-      if (isDigitalHumanMode) {
-        DigitalHumanChatBoxRef.current.start();
-      }
-    }
-  }, [isDigitalHumanMode, DigitalHumanChatBoxRef.current]);
+
   return (
     <Flex h={'100%'}>
       <Head>
@@ -382,15 +369,8 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
             flex={'1 0 0'}
             flexDirection={'column'}
           >
-            <Script
-              src="https://virtualhuman-app.oss-cn-beijing.aliyuncs.com/interaction/public/js/sdk/release/xiaoiceRTC1.0.6.js"
-              strategy="afterInteractive"
-            ></Script>
-            <Script
-              src="https://virtualhuman-app.oss-cn-beijing.aliyuncs.com/interaction/public/js/sdk/release/xiaoiceASR1.0.4.js"
-              strategy="afterInteractive"
-            ></Script>
             {/* header */}
+            <Script src="/js/avatar.js" strategy="lazyOnload"></Script>
             <ChatHeader
               appAvatar={chatData.app.avatar}
               appName={chatData.app.name}
@@ -399,6 +379,7 @@ const Chat = ({ appId, chatId }: { appId: string; chatId: string }) => {
               chatModels={chatData.app.chatModels}
               onOpenSlider={onOpenSlider}
               showHistory
+              digitalHumanMode={isDigitalHumanMode}
               onSwitchChange={handleSwitchChange}
             />
 

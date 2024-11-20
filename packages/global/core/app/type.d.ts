@@ -16,6 +16,7 @@ export interface AppSchema {
   simpleTemplateId: string;
   avatar: string;
   intro: string;
+  assistantId: string;
   updateTime: number;
   modules: ModuleItemType[];
   permission: `${PermissionTypeEnum}`;
@@ -28,6 +29,7 @@ export type AppListItemType = {
   name: string;
   avatar: string;
   intro: string;
+  assistantId: string;
   isOwner: boolean;
   permission: `${PermissionTypeEnum}`;
 };
@@ -54,6 +56,7 @@ export type AppSimpleEditFormType = {
   // templateId: string;
   aiSettings: {
     model: string;
+    assistantId?: string;
     systemPrompt?: string | undefined;
     temperature: number;
     maxToken: number;

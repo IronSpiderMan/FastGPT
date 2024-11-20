@@ -6,6 +6,7 @@ export const defaultApp: AppDetailType = {
   userId: 'userId',
   name: '应用加载中',
   type: 'simple',
+  assistantId: '',
   simpleTemplateId: 'fastgpt-universal',
   avatar: '/icon/logo.svg',
   intro: '',

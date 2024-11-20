@@ -18,8 +18,8 @@ export const TeamMemberRoles = [
 
 export const TeamMemberRoleMap = {
   [TeamMemberRoleEnum.superAdmin]: {
-    value: TeamMemberRoleEnum.owner,
-    label: 'user.team.role.Owner'
+    value: TeamMemberRoleEnum.superAdmin,
+    label: 'user.team.role.SuperAdmin'
   },
   [TeamMemberRoleEnum.owner]: {
     value: TeamMemberRoleEnum.owner,

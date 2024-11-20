@@ -88,6 +88,7 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
         avatar: data.avatar,
         name: data.name,
         type: template.type,
+        assistantId: '',
         modules: template.modules || []
       });
     },

@@ -1,5 +1,5 @@
 # --------- install dependence -----------
-FROM node:18.17-alpine AS mainDeps
+FROM node:22.11.0-slim AS mainDeps
 WORKDIR /app
 
 ARG name
@@ -20,7 +20,7 @@ RUN [ -f pnpm-lock.yaml ] || (echo "Lockfile not found." && exit 1)
 RUN pnpm i
 
 # --------- install dependence -----------
-FROM node:18.17-alpine AS workerDeps
+FROM node:22.11.0-slim AS workerDeps
 WORKDIR /app
 
 ARG proxy
@@ -34,7 +34,7 @@ COPY ./worker /app/worker
 RUN cd /app/worker && pnpm i --production --ignore-workspace
 
 # --------- builder -----------
-FROM node:18.17-alpine AS builder
+FROM node:22.11.0-slim AS builder
 WORKDIR /app
 
 ARG name
@@ -53,7 +53,7 @@ RUN apk add --no-cache libc6-compat && npm install -g pnpm@8.6.0
 RUN pnpm --filter=$name build
 
 # --------- runner -----------
-FROM node:18.17-alpine AS runner
+FROM node:22.11.0-slim AS runner
 WORKDIR /app
 
 ARG name
@@ -73,7 +73,7 @@ COPY --from=builder /app/projects/$name/next.config.js /app/projects/$name/next.
 COPY --from=builder --chown=nextjs:nodejs /app/projects/$name/.next/standalone /app/
 COPY --from=builder --chown=nextjs:nodejs /app/projects/$name/.next/static /app/projects/$name/.next/static
 # copy package.json to version file
-COPY --from=builder /app/projects/$name/package.json ./package.json 
+COPY --from=builder /app/projects/$name/package.json ./package.json
 # copy woker
 COPY --from=workerDeps /app/worker /app/worker
 # copy config

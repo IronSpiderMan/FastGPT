@@ -19,6 +19,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       authApiKey: true
     });
 
+    console.log(teamId, tmbId, teamOwner, role, canWrite);
+
     const datasets = await MongoDataset.find({
       ...mongoRPermission({ teamId, tmbId, role }),
       ...(parentId !== undefined && { parentId: parentId || null }),

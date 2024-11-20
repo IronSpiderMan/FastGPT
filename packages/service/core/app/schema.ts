@@ -46,6 +46,10 @@ const AppSchema = new Schema({
     type: String,
     default: ''
   },
+  assistantId: {
+    type: Schema.Types.ObjectId,
+    ref: 'assistant'
+  },
   updateTime: {
     type: Date,
     default: () => new Date()

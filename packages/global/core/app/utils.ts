@@ -10,6 +10,7 @@ export const getDefaultAppForm = (): AppSimpleEditFormType => {
   return {
     aiSettings: {
       model: 'gpt-3.5-turbo',
+      assistantId: '',
       systemPrompt: '',
       temperature: 0,
       isResponseAnswerText: true,
@@ -51,6 +52,10 @@ export const appModules2Form = ({ modules }: { modules: ModuleItemType[] }) => {
       defaultAppForm.aiSettings.model = findInputValueByKey(
         module.inputs,
         ModuleInputKeyEnum.aiModel
+      );
+      defaultAppForm.aiSettings.assistantId = findInputValueByKey(
+        module.inputs,
+        ModuleInputKeyEnum.assistantId
       );
       defaultAppForm.aiSettings.systemPrompt = findInputValueByKey(
         module.inputs,

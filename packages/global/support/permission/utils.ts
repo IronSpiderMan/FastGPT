@@ -16,6 +16,9 @@ export function mongoRPermission({
     ...(role === TeamMemberRoleEnum.visitor && { permission: PermissionTypeEnum.public }),
     ...(role === TeamMemberRoleEnum.admin && {
       $or: [{ permission: PermissionTypeEnum.public }, { tmbId }]
+    }),
+    ...(role === TeamMemberRoleEnum.superAdmin && {
+      $or: [{ permission: PermissionTypeEnum.public }, { tmbId }]
     })
   };
 }

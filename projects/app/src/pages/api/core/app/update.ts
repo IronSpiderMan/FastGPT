@@ -15,7 +15,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const { name, avatar, type, simpleTemplateId, intro, modules, permission, teamTags } =
       req.body as AppUpdateParams;
     const { appId } = req.query as { appId: string };
-
+    let assistantId = '';
     if (!appId) {
       throw new Error('appId is empty');
     }
@@ -27,13 +27,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     // 1. dataset search limit, less than model quoteMaxToken
     if (modules) {
       let maxTokens = 3000;
-
       modules.forEach((item) => {
         if (item.flowType === FlowNodeTypeEnum.chatNode) {
           const model =
             item.inputs.find((item) => item.key === ModuleInputKeyEnum.aiModel)?.value || '';
           const chatModel = getLLMModel(model);
           const quoteMaxToken = chatModel.quoteMaxToken || 3000;
+          assistantId = item.assistantId;
 
           maxTokens = Math.max(maxTokens, quoteMaxToken);
         }
@@ -64,6 +64,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         simpleTemplateId,
         avatar,
         intro,
+        assistantId,
         permission,
         teamTags: teamTags,
         ...(modules && {

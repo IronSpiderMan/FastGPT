@@ -40,6 +40,7 @@ export enum ModuleInputKeyEnum {
   // latest
   // common
   aiModel = 'model',
+  assistantId = 'assistantId',
   aiSystemPrompt = 'systemPrompt',
   description = 'description',
   anyInput = 'system_anyInput',
