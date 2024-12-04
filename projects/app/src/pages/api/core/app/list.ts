@@ -23,6 +23,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       data: myApps.map((app) => ({
         _id: app._id,
         avatar: app.avatar,
+        assistantId: app.assistantId || '',
         name: app.name,
         intro: app.intro,
         isOwner: teamOwner || String(app.tmbId) === tmbId,

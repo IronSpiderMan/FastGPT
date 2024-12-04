@@ -104,30 +104,30 @@ const AppCard = ({ appId }: { appId: string }) => {
             {appDetail.intro || t('core.app.tip.Add a intro to app')}
           </Box>
           <Flex>
-            <Button
-              size={['sm', 'md']}
-              variant={'whitePrimary'}
-              leftIcon={<MyIcon name={'core/chat/chatLight'} w={'16px'} />}
-              onClick={() => router.push(`/chat?appId=${appId}`)}
-            >
-              {t('core.Chat')}
-            </Button>
-            <Button
-              mx={3}
-              size={['sm', 'md']}
-              variant={'whitePrimary'}
-              leftIcon={<MyIcon name={'support/outlink/shareLight'} w={'16px'} />}
-              onClick={() => {
-                router.replace({
-                  query: {
-                    appId,
-                    currentTab: 'publish'
-                  }
-                });
-              }}
-            >
-              {t('core.app.navbar.Publish')}
-            </Button>
+            {/*<Button*/}
+            {/*  size={['sm', 'md']}*/}
+            {/*  variant={'whitePrimary'}*/}
+            {/*  leftIcon={<MyIcon name={'core/chat/chatLight'} w={'16px'} />}*/}
+            {/*  onClick={() => router.push(`/chat?appId=${appId}`)}*/}
+            {/*>*/}
+            {/*  {t('core.Chat')}*/}
+            {/*</Button>*/}
+            {/*<Button*/}
+            {/*  mx={3}*/}
+            {/*  size={['sm', 'md']}*/}
+            {/*  variant={'whitePrimary'}*/}
+            {/*  leftIcon={<MyIcon name={'support/outlink/shareLight'} w={'16px'} />}*/}
+            {/*  onClick={() => {*/}
+            {/*    router.replace({*/}
+            {/*      query: {*/}
+            {/*        appId,*/}
+            {/*        currentTab: 'publish'*/}
+            {/*      }*/}
+            {/*    });*/}
+            {/*  }}*/}
+            {/*>*/}
+            {/*  {t('core.app.navbar.Publish')}*/}
+            {/*</Button>*/}
             {appDetail.canWrite && feConfigs?.show_team_chat && (
               <Button
                 mr={3}

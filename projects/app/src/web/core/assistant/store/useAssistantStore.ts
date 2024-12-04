@@ -12,8 +12,8 @@ type State = {
   assistantDetail: AssistantDetailType;
   loadAssistantDetail: (id: string, init?: boolean) => Promise<AssistantDetailType>;
   updateAssistantDetail(appId: string, data: AssistantUpdateParams): Promise<void>;
-  replaceAssistantDetail(appId: string, data: AssistantUpdateParams): Promise<void>;
-  clearAssistantModules(): void;
+  // replaceAssistantDetail(appId: string, data: AssistantUpdateParams): Promise<void>;
+  // clearAssistantModules(): void;
 };
 
 export const useAssistantStore = create<State>()(

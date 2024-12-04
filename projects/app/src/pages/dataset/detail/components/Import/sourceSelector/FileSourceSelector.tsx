@@ -27,17 +27,17 @@ const FileModeSelector = ({ onClose }: { onClose: () => void }) => {
               title: t('core.dataset.import.Local file'),
               desc: t('core.dataset.import.Local file desc'),
               value: ImportDataSourceEnum.fileLocal
-            },
-            {
-              title: t('core.dataset.import.Web link'),
-              desc: t('core.dataset.import.Web link desc'),
-              value: ImportDataSourceEnum.fileLink
-            },
-            {
-              title: t('core.dataset.import.Custom text'),
-              desc: t('core.dataset.import.Custom text desc'),
-              value: ImportDataSourceEnum.fileCustom
             }
+            // {
+            //   title: t('core.dataset.import.Web link'),
+            //   desc: t('core.dataset.import.Web link desc'),
+            //   value: ImportDataSourceEnum.fileLink
+            // },
+            // {
+            //   title: t('core.dataset.import.Custom text'),
+            //   desc: t('core.dataset.import.Custom text desc'),
+            //   value: ImportDataSourceEnum.fileCustom
+            // }
           ]}
           value={value}
           onChange={setValue}

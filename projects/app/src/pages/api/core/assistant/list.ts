@@ -10,10 +10,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
   try {
     await connectToDatabase();
     // 凭证校验
-    const { role } = await authUserRole({ req, authToken: true });
-    if (role !== TeamMemberRoleEnum.superAdmin) {
-      throw new Error('Permission denied');
-    }
+    // const { role } = await authUserRole({ req, authToken: true });
+    // if (role !== TeamMemberRoleEnum.visitor) {
+    //   throw new Error('Permission denied');
+    // }
     // 根据 userId 获取模型信息
     const assistants = await MongoAssistant.find().sort({
       updateTime: -1

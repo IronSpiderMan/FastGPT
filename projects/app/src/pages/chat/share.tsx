@@ -361,6 +361,7 @@ const OutLink = ({
         >
           {/* header */}
           <ChatHeader
+            digitalHumanMode={false}
             appAvatar={chatData.app.avatar}
             appName={chatData.app.name}
             history={chatData.history}

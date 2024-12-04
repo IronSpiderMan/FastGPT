@@ -1,5 +1,5 @@
 {
-  "App": "应用",
+  "App": "个人中心",
   "Create New": "",
   "Export": "导出",
   "Folder": "文件夹",
@@ -37,7 +37,7 @@
     "Logs Time": "时间",
     "Logs Title": "标题",
     "Mark Count": "标注答案数量",
-    "My Apps": "我的应用",
+    "My Apps": "个人中心",
     "Output Field Settings": "输出字段编辑",
     "Paste Config": "粘贴配置",
     "To Chat": "前去对话",
@@ -147,7 +147,7 @@
     "Select One Folder": "选择一个目录",
     "Select template": "选择模板",
     "Set Avatar": "点击设置头像",
-    "Set Name": "取个名字",
+    "Set Name": "命名",
     "Set Team Tags": "团队标签",
     "Setting": "设置",
     "Status": "状态",
@@ -365,7 +365,7 @@
         "Simple template tip": "极简模板\n已内置参数细节"
       },
       "tip": {
-        "Add a intro to app": "快来给应用一个介绍~",
+        "Add a intro to app": "还没有介绍~",
         "chatNodeSystemPromptTip": "模型固定的引导词，通过调整该内容，可以引导模型聊天方向。该内容会被固定在上下文的开头。可使用变量，例如 {{language}}",
         "userGuideTip": "可以在对话前设置引导语，设置全局变量，设置下一步指引",
         "variableTip": "可以在对话开始前，要求用户填写一些内容作为本轮对话的特定变量。该模块位于开场引导之后。\n变量可以通过 {{变量key}} 的形式注入到其他模块 string 类型的输入中，例如：提示词、限定词等",
@@ -564,7 +564,7 @@
           "source size": "来源大小"
         },
         "status": {
-          "active": "已就绪",
+          "active": "已训练完",
           "syncing": "同步中"
         },
         "sync": {
@@ -628,7 +628,7 @@
         "Custom split char Tips": "允许你根据自定义的分隔符进行分块。通常用于已处理好的数据，使用特定的分隔符来精确分块。",
         "Custom text": "自定义文本",
         "Custom text desc": "手动输入一段文本作为数据集",
-        "Data Preprocessing": "数据处理",
+        "Data Preprocessing": "文本预览",
         "Data file progress": "数据上传进度",
         "Data process params": "数据处理参数",
         "Down load csv template": "点击下载 CSV 模板",
@@ -734,7 +734,7 @@
         "Search basic params": "检索参数"
       },
       "status": {
-        "active": "已就绪",
+        "active": "已训练完",
         "syncing": "同步中"
       },
       "test": {
@@ -1142,7 +1142,7 @@
   },
   "navbar": {
     "Account": "账号",
-    "Apps": "应用",
+    "Apps": "个人中心",
     "Apps Share": "应用分享",
     "Chat": "聊天",
     "Datasets": "知识库",

@@ -16,6 +16,7 @@ import CreateModal from './component/CreateModal';
 import { useAppStore } from '@/web/core/app/store/useAppStore';
 import PermissionIconText from '@/components/support/permission/IconText';
 import { useUserStore } from '@/web/support/user/useUserStore';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 
 const MyApps = () => {
   const { toast } = useToast();
@@ -59,15 +60,22 @@ const MyApps = () => {
     refetchOnMount: true
   });
 
+  console.log('................');
+  console.log(userInfo);
   return (
     <PageContainer isLoading={isFetching} insertProps={{ px: [5, '48px'] }}>
       <Flex pt={[4, '30px']} alignItems={'center'} justifyContent={'space-between'}>
         <Box letterSpacing={1} fontSize={['20px', '24px']} color={'myGray.900'}>
           {t('app.My Apps')}
         </Box>
-        <Button leftIcon={<AddIcon />} variant={'primaryOutline'} onClick={onOpenCreateModal}>
-          {t('common.New Create')}
-        </Button>
+        {userInfo?.team.role === TeamMemberRoleEnum.superAdmin && (
+          <Button leftIcon={<AddIcon />} variant={'primaryOutline'} onClick={onOpenCreateModal}>
+            {t('common.New Create')}
+          </Button>
+        )}
+        {/*<Button leftIcon={<AddIcon />} variant={'primaryOutline'} onClick={onOpenCreateModal}>*/}
+        {/*  {t('common.New Create')}*/}
+        {/*</Button>*/}
       </Flex>
       <Grid
         py={[4, 6]}
@@ -140,7 +148,7 @@ const MyApps = () => {
                 fontSize={'sm'}
                 color={'myGray.600'}
               >
-                {app.intro || '这个应用还没写介绍~'}
+                {app.intro || '还没写介绍~'}
               </Box>
               <Flex h={'34px'} alignItems={'flex-end'}>
                 <Box flex={1}>

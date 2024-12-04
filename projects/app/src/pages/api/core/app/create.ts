@@ -4,6 +4,7 @@ import { connectToDatabase } from '@/service/mongo';
 import type { CreateAppParams } from '@fastgpt/global/core/app/api.d';
 import { AppTypeEnum } from '@fastgpt/global/core/app/constants';
 import { MongoApp } from '@fastgpt/service/core/app/schema';
+import { MongoAssistant } from '@fastgpt/service/core/assistant/schema';
 import { authUserNotVisitor } from '@fastgpt/service/support/permission/auth/user';
 import { SimpleModeTemplate_FastGPT_Universal } from '@/global/core/app/constants';
 import { checkTeamAppLimit } from '@fastgpt/service/support/permission/teamLimit';
@@ -14,7 +15,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     const {
       name = 'APP',
       avatar,
-      assistantId,
       type = AppTypeEnum.advanced,
       modules
     } = req.body as CreateAppParams;
@@ -28,7 +28,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     // 上限校验
     await checkTeamAppLimit(teamId);
-
+    const assistant = await MongoAssistant.findOne();
+    if (!assistant) {
+      throw new Error('请先创建数字人');
+    }
+    const assistantId = assistant._id;
     // 创建模型
     const response = await MongoApp.create({
       avatar,

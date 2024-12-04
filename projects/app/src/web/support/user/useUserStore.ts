@@ -13,8 +13,8 @@ type State = {
   users: UserListItemType[];
   loadUsers: (init?: boolean) => Promise<UserListItemType[]>;
   userInfo: UserType | null;
-  userDetail: UpdateUserParams;
-  loadUserDetail: (id: string, init?: boolean) => Promise<UserListItemType>;
+  userDetail: UpdateUserParams | null;
+  loadUserDetail: (id: string, init?: boolean) => Promise<UpdateUserParams | null | undefined>;
   updateUserDetail(data: UpdateUserParams): Promise<void>;
   initUserInfo: () => Promise<UserType>;
   setUserInfo: (user: UserType | null) => void;
@@ -76,9 +76,12 @@ export const useUserStore = create<State>()(
           }
         },
         async loadUserDetail(id: string, init = false) {
+          // @ts-ignore
           if (id === get().userDetail._id && !init) return get().userDetail;
+          // @ts-ignore
           const res = await getUserById(id);
           set((state) => {
+            // @ts-ignore
             state.userDetail = res;
           });
           return res;

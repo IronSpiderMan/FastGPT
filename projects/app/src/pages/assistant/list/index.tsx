@@ -135,7 +135,7 @@ const Assistants = () => {
                 fontSize={'sm'}
                 color={'myGray.600'}
               >
-                {assistant.intro || '这个应用还没写介绍~'}
+                {assistant.intro || '还没写介绍~'}
               </Box>
             </Box>
           </MyTooltip>

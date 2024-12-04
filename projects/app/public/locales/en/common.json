@@ -1,5 +1,5 @@
 {
-  "App": "App",
+  "App": "People",
   "Create New": "",
   "Export": "Export",
   "Folder": "Folder",
@@ -37,7 +37,7 @@
     "Logs Time": "Time",
     "Logs Title": "Title",
     "Mark Count": "Mark Count",
-    "My Apps": "My Apps",
+    "My Apps": "People",
     "Output Field Settings": "Output Field Settings",
     "Paste Config": "Paste Config",
     "To Chat": "To Chat Page",
@@ -1139,7 +1139,7 @@
   },
   "navbar": {
     "Account": "Account",
-    "Apps": "App",
+    "Apps": "People",
     "Apps Share": "",
     "Chat": "Chat",
     "Datasets": "DataSet",

@@ -53,7 +53,7 @@ const ShareModelList = ({
               wordBreak={'break-all'}
               color={'blackAlpha.600'}
             >
-              {model.intro || '这个应用还没有介绍~'}
+              {model.intro || '还没有介绍~'}
             </Box>
           </MyTooltip>
 

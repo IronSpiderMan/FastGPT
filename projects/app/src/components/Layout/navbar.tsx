@@ -31,18 +31,18 @@ const Navbar = ({ unread }: { unread: number }) => {
         activeLink: ['/chat']
       },
       {
-        label: t('navbar.Apps'),
-        icon: 'core/app/aiLight',
-        activeIcon: 'core/app/aiFill',
-        link: `/app/list`,
-        activeLink: ['/app/list', '/app/detail']
-      },
-      {
         label: t('navbar.Datasets'),
         icon: 'core/dataset/datasetLight',
         activeIcon: 'core/dataset/datasetFill',
         link: `/dataset/list`,
         activeLink: ['/dataset/list', '/dataset/detail']
+      },
+      {
+        label: t('navbar.Apps'),
+        icon: 'core/app/aiLight',
+        activeIcon: 'core/app/aiFill',
+        link: `/app/list`,
+        activeLink: ['/app/list', '/app/detail']
       },
       {
         label: t('navbar.Account'),
@@ -53,7 +53,7 @@ const Navbar = ({ unread }: { unread: number }) => {
       }
     ];
     if (userInfo?.team?.role === TeamMemberRoleEnum.superAdmin) {
-      list.splice(2, 0, {
+      list.splice(3, 0, {
         label: t('assistant.Assistant'),
         icon: 'core/assistant/assistantLight',
         activeIcon: 'core/assistant/assistantFill',

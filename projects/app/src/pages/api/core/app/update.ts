@@ -21,7 +21,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     // 凭证校验
-    await authApp({ req, authToken: true, appId, per: permission ? 'owner' : 'w' });
+    const app = await authApp({ req, authToken: true, appId, per: permission ? 'owner' : 'w' });
+    assistantId = app.app.assistantId;
 
     // check modules
     // 1. dataset search limit, less than model quoteMaxToken
@@ -33,7 +34,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             item.inputs.find((item) => item.key === ModuleInputKeyEnum.aiModel)?.value || '';
           const chatModel = getLLMModel(model);
           const quoteMaxToken = chatModel.quoteMaxToken || 3000;
-          assistantId = item.assistantId;
+          assistantId = item.assistantId || app.app.assistantId;
 
           maxTokens = Math.max(maxTokens, quoteMaxToken);
         }

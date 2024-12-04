@@ -330,7 +330,9 @@ const AssistantChatBox = (
           console.log('回答内容：');
           console.log(responseText);
           console.log('===============================================================');
-          avatarWsRef.current.talk(responseText);
+          if (avatarWsRef.current) {
+            (avatarWsRef.current as any).talk(responseText.replace(/[#*@$]/g, ' '));
+          }
 
           // set finish status
           setChatHistory((state) =>
@@ -411,8 +413,8 @@ const AssistantChatBox = (
 
   useEffect(() => {
     console.log('useEffect中：', avatarId);
-    if (avatarId) {
-      avatarWsRef.current.connect(avatarId);
+    if (avatarId && avatarWsRef && avatarWsRef.current) {
+      (avatarWsRef.current as any).connect(avatarId);
     }
   }, [avatarId]);
 
@@ -422,7 +424,7 @@ const AssistantChatBox = (
       avatarWsRef.current = new window.AvatarWebsocket(
         // 'content', 'https://hat-assistant-nffiot.hkust-gz.edu.cn/wav2lip/api/v1',
         'content',
-        'localhost:8080/api/v1',
+        'assistant-nffiot.hkust-gz.edu.cn/api/dm',
         {
           onClose: () => {
             console.log('数字人停了');
@@ -432,12 +434,12 @@ const AssistantChatBox = (
             setIsLoading(false);
           }
         },
-        false
+        true
       );
     }
     return () => {
       if (avatarWsRef.current) {
-        avatarWsRef.current?.close();
+        (avatarWsRef.current as any).close();
       }
     };
   }, []);
@@ -465,7 +467,19 @@ const AssistantChatBox = (
       <Box ref={ChatBoxRef} flex={'1 0 0'} h={0} w={'100%'} overflow={'overlay'} px={[4, 0]} pb={3}>
         <Box id="chat-container" maxW={['100%', '92%']} h={'100%'} mx={'auto'}>
           <Center w="100%" h="100%">
-            <Box id={'content'} h="400px" />
+            <Box
+              id={'content'}
+              h="400px"
+              onClick={async () => {
+                if (avatarWsRef.current) {
+                  try {
+                    await (avatarWsRef.current as any).interrupt(); // 等待异步操作完成
+                  } catch (error) {
+                    console.error('Interrupt failed:', error); // 捕获可能的错误
+                  }
+                }
+              }}
+            />
           </Center>
         </Box>
       </Box>

@@ -17,6 +17,8 @@ import { serviceSideProps } from '@/web/common/utils/i18n';
 import { useAppStore } from '@/web/core/app/store/useAppStore';
 import Head from 'next/head';
 import { useTranslation } from 'next-i18next';
+import { useUserStore } from '@/web/support/user/useUserStore';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 
 const FlowEdit = dynamic(() => import('./components/FlowEdit'), {
   loading: () => <Loading />
@@ -40,6 +42,7 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
   const { toast } = useToast();
   const { appId } = router.query as { appId: string };
   const { appDetail, loadAppDetail, clearAppModules } = useAppStore();
+  const { userInfo } = useUserStore();
 
   const setCurrentTab = useCallback(
     (tab: `${TabEnum}`) => {
@@ -60,7 +63,7 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
         id: TabEnum.simpleEdit,
         icon: 'common/overviewLight'
       },
-      // ...(feConfigs?.hide_app_flow
+      // ...(feConfigs?.hide_app_flow && userInfo?.team?.role !== TeamMemberRoleEnum.superAdmin
       //   ? []
       //   : [
       //       {
@@ -69,13 +72,13 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
       //         icon: 'core/modules/flowLight'
       //       }
       //     ]),
-      {
-        label: t('core.app.navbar.Publish app'),
-        id: TabEnum.publish,
-        icon: 'support/outlink/shareLight'
-      },
-      { label: t('app.Chat logs'), id: TabEnum.logs, icon: 'core/app/logsLight' },
-      { label: t('core.Start chat'), id: TabEnum.startChat, icon: 'core/chat/chatLight' }
+      // {
+      //   label: t('core.app.navbar.Publish app'),
+      //   id: TabEnum.publish,
+      //   icon: 'support/outlink/shareLight'
+      // },
+      { label: t('app.Chat logs'), id: TabEnum.logs, icon: 'core/app/logsLight' }
+      // { label: t('core.Start chat'), id: TabEnum.startChat, icon: 'core/chat/chatLight' }
     ],
     [feConfigs?.hide_app_flow, t]
   );

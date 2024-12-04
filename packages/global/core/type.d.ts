@@ -5,5 +5,6 @@ declare global {
   interface Window {
     AsrSDK: any;
     RTCInteraction: any;
+    AvatarWebsocket: any;
   }
 }

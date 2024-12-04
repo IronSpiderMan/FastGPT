@@ -37,7 +37,7 @@ const CreateModal = ({ onClose, parentId }: { onClose: () => void; parentId?: st
       name: '',
       intro: '',
       vectorModel: filterNotHiddenVectorModelList[0].model,
-      agentModel: datasetModelList[0].model
+      agentModel: datasetModelList.length ? datasetModelList[0].model : 'gpt-3.5-turbo-16k'
     }
   });
 
