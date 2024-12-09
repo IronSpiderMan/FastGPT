@@ -37,6 +37,9 @@ import { formatEditorVariablePickerIcon } from '@fastgpt/global/core/module/util
 import SearchParamsTip from '@/components/core/dataset/SearchParamsTip';
 import { useAssistantStore } from '@/web/core/assistant/store/useAssistantStore';
 import MySelect from '@/components/Select';
+import { useUserStore } from '@/web/support/user/useUserStore';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
+import { AssistantListItemType } from '@fastgpt/global/core/assistant/type';
 
 const DatasetSelectModal = dynamic(() => import('@/components/core/module/DatasetSelectModal'));
 const DatasetParamsModal = dynamic(() => import('@/components/core/module/DatasetParamsModal'));
@@ -63,21 +66,39 @@ const EditForm = ({
   const { isPc, llmModelList, reRankModelList } = useSystemStore();
   const [refresh, setRefresh] = useState(false);
   const [, startTst] = useTransition();
+  const { userInfo } = useUserStore();
+  const [assistantSelectList, setAssistantSelectList] = useState<any[]>([]);
 
   const { setValue, getValues, reset, handleSubmit, control, watch } =
     useForm<AppSimpleEditFormType>({
       defaultValues: getDefaultAppForm()
     });
 
+  useEffect(() => {
+    if (userInfo?.team.role === TeamMemberRoleEnum.superAdmin) {
+      console.log('超级管理员', assistants);
+      setAssistantSelectList(
+        (() =>
+          assistants.map((item) => ({
+            value: item._id,
+            label: item.name
+          })))()
+      );
+      console.log(assistantSelectList);
+    } else {
+      console.log('不是超级管理员');
+    }
+  }, [userInfo, assistants]);
+
   /* 加载模型 */
   const { isFetching } = useQuery(['loadAssistants'], () => loadAssistants(true), {
     refetchOnMount: true
   });
-  const assistantSelectList = (() =>
-    assistants.map((item) => ({
-      value: item._id,
-      label: item.name
-    })))();
+  // const assistantSelectList = (() =>
+  //   assistants.map((item) => ({
+  //     value: item._id,
+  //     label: item.name
+  //   })))();
 
   const { fields: datasets, replace: replaceKbList } = useFieldArray({
     control,
@@ -279,16 +300,20 @@ const EditForm = ({
             <Flex alignItems={'center'} mt={5}>
               <Box {...LabelStyles}>{t('assistant.Assistant')}</Box>
               <Box flex={'1 0 0'}>
-                <MySelect
-                  width={'100%'}
-                  value={assistantId || ''}
-                  list={assistantSelectList}
-                  onchange={(val: any) => {
-                    setAssistantId(val);
-                    setValue('aiSettings.assistantId', val);
-                    setRefresh(!refresh);
-                  }}
-                />
+                {userInfo?.team.role === TeamMemberRoleEnum.superAdmin ? (
+                  <MySelect
+                    width={'100%'}
+                    value={assistantId || ''}
+                    list={assistantSelectList}
+                    onchange={(val: any) => {
+                      setAssistantId(val);
+                      setValue('aiSettings.assistantId', val);
+                      setRefresh(!refresh);
+                    }}
+                  />
+                ) : (
+                  <Box>{assistants.find((assistant) => assistant._id == assistantId)?.name}</Box>
+                )}
               </Box>
             </Flex>
 
