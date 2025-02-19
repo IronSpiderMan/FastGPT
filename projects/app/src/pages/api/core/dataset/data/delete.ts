@@ -22,7 +22,7 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
       authToken: true,
       authApiKey: true,
       dataId,
-      per: 'w'
+      per: 'owner'
     });
 
     await deleteDatasetData(datasetData);

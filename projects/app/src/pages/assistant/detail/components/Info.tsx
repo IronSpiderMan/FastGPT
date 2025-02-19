@@ -1,4 +1,4 @@
-import { Box, Button, Flex, Input, Textarea, useTheme } from '@chakra-ui/react';
+import { Box, Button, Flex, Input, Select, Textarea, useTheme } from '@chakra-ui/react';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { useTranslation } from 'next-i18next';
 import { useAssistantStore } from '@/web/core/assistant/store/useAssistantStore';
@@ -15,6 +15,7 @@ import { useRouter } from 'next/router';
 import { useLoading } from '@/web/common/hooks/useLoading';
 import type { UserType } from '@fastgpt/global/support/user/type';
 import { AssistantDetailType } from '@fastgpt/global/core/assistant/type';
+import { AssistantFields } from '@fastgpt/global/core/assistant/constants';
 
 type FormType = {
   avatar: string;
@@ -22,6 +23,7 @@ type FormType = {
   title: string;
   intro: string;
   projectId: string;
+  field: string;
 };
 
 const AssistantInfo = () => {
@@ -43,7 +45,8 @@ const AssistantInfo = () => {
       name: assistantDetail?.name,
       title: assistantDetail?.title,
       intro: assistantDetail?.intro,
-      projectId: assistantDetail?.projectId
+      projectId: assistantDetail?.projectId,
+      field: assistantDetail?.field
     }
   });
   const router = useRouter();
@@ -73,6 +76,7 @@ const AssistantInfo = () => {
     setValue('title', assistantDetail.title);
     setValue('intro', assistantDetail.intro);
     setValue('projectId', assistantDetail.projectId);
+    setValue('field', assistantDetail.field);
   }, [assistantDetail, setValue]);
 
   const onSelectFile = useCallback(
@@ -195,17 +199,40 @@ const AssistantInfo = () => {
           <Input
             flex={1}
             bg={'myWhite.600'}
-            {...register('intro', {
+            {...register('projectId', {
               required: t('core.app.error.App name can not be empty')
             })}
           />
+        </Flex>
+        <Flex alignItems={'center'} mt={6}>
+          <Box flex={'0 0 80px'}>{t('assistant.edit.Field')}:&nbsp;</Box>
+          <Select
+            flex={1}
+            bg={'myWhite.600'}
+            {...register('field', {
+              required: t('core.app.error.App name can not be empty')
+            })}
+          >
+            {AssistantFields.map((field) => (
+              <option key={field.label} value={field.value}>
+                {field.value}
+              </option>
+            ))}
+          </Select>
+          {/*<Input*/}
+          {/*  flex={1}*/}
+          {/*  bg={'myWhite.600'}*/}
+          {/*  {...register('field', {*/}
+          {/*    required: t('core.app.error.App name can not be empty')*/}
+          {/*  })}*/}
+          {/*/>*/}
         </Flex>
         <Flex alignItems={'center'} mt={6}>
           <Box flex={'0 0 80px'}>{t('assistant.edit.Intro')}:&nbsp;</Box>
           <Textarea
             flex={1}
             bg={'myWhite.600'}
-            {...register('projectId', {
+            {...register('intro', {
               required: t('core.app.error.App name can not be empty')
             })}
           />

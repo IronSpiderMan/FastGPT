@@ -62,7 +62,8 @@
       "Name": "姓名",
       "Title": "称呼",
       "Intro": "简介",
-      "ProjectId": "项目Id"
+      "ProjectId": "项目Id",
+      "Field": "领域"
     },
     "All Assistants": "数字人"
   },
@@ -1113,6 +1114,7 @@
     "Footer Product": "产品",
     "Footer Support": "支持",
     "Login": "登录",
+    "HKULogin": "统一认证登录",
     "Open": "",
     "OpenAPI": "OpenAPI",
     "OpenAPI Desc": "与 GPT API 一致的对外接口，助你轻松接入已有应用",

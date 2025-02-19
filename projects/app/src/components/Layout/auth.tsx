@@ -13,7 +13,8 @@ const unAuthPage: { [key: string]: boolean } = {
   '/chat/share': true,
   '/chat/team': true,
   '/tools/price': true,
-  '/price': true
+  '/price': true,
+  '/signin-oidc': true
 };
 
 const Auth = ({ children }: { children: JSX.Element }) => {

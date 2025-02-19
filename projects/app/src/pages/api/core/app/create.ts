@@ -5,7 +5,10 @@ import type { CreateAppParams } from '@fastgpt/global/core/app/api.d';
 import { AppTypeEnum } from '@fastgpt/global/core/app/constants';
 import { MongoApp } from '@fastgpt/service/core/app/schema';
 import { MongoAssistant } from '@fastgpt/service/core/assistant/schema';
-import { authUserNotVisitor } from '@fastgpt/service/support/permission/auth/user';
+import {
+  authUserIsSuperAdmin,
+  authUserNotVisitor
+} from '@fastgpt/service/support/permission/auth/user';
 import { SimpleModeTemplate_FastGPT_Universal } from '@/global/core/app/constants';
 import { checkTeamAppLimit } from '@fastgpt/service/support/permission/teamLimit';
 
@@ -24,10 +27,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     // 凭证校验
-    const { teamId, tmbId } = await authUserNotVisitor({ req, authToken: true });
+    // const { teamId, tmbId } = await authUserNotVisitor({ req, authToken: true });
+    // 只有superAdmin才有对app的 增删权限
+    const { teamId, tmbId } = await authUserIsSuperAdmin({ req, authToken: true });
 
     // 上限校验
     await checkTeamAppLimit(teamId);
+    // 必须先有数字人，才能创建应用
     const assistant = await MongoAssistant.findOne();
     if (!assistant) {
       throw new Error('请先创建数字人');

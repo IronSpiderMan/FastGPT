@@ -13,6 +13,7 @@ import { clearToken, setToken } from '@/web/support/user/auth';
 import CommunityModal from '@/components/CommunityModal';
 import Script from 'next/script';
 import Loading from '@/components/Loading';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 
 const RegisterForm = dynamic(() => import('./components/RegisterForm'));
 const ForgetPasswordForm = dynamic(() => import('./components/ForgetPasswordForm'));
@@ -36,7 +37,7 @@ const Login = () => {
       setUserInfo(res.user);
       setToken(res.token);
       setTimeout(() => {
-        router.push(lastRoute ? decodeURIComponent(lastRoute) : '/app/list');
+        router.push(lastRoute ? decodeURIComponent(lastRoute) : '/');
       }, 300);
     },
     [lastRoute, router, setLastChatId, setLastChatAppId, setUserInfo]
@@ -63,7 +64,12 @@ const Login = () => {
   }, [feConfigs.oauth]);
   useEffect(() => {
     clearToken();
-    router.prefetch('/app/list');
+    router.prefetch('/');
+    // if(userInfo?.team.role === TeamMemberRoleEnum.visitor){
+    //   router.prefetch('/chat/')
+    // }else{
+    //   router.prefetch('/dataset/list');
+    // }
   }, []);
 
   return (
@@ -118,7 +124,7 @@ const Login = () => {
           {/*)}*/}
         </Flex>
 
-        {isOpen && <CommunityModal onClose={onClose} />}
+        {/*{isOpen && <CommunityModal onClose={onClose} />}*/}
       </Flex>
     </>
   );

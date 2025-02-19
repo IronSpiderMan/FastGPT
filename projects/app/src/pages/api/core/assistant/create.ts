@@ -9,7 +9,14 @@ import { authUserRole } from '@fastgpt/service/support/permission/auth/user';
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
-    const { name = '博士', avatar, title, intro, projectId } = req.body as CreateAssistantParams;
+    const {
+      name = '博士',
+      avatar,
+      title,
+      intro,
+      projectId,
+      field
+    } = req.body as CreateAssistantParams;
     if (!name) {
       throw new Error('缺少参数');
     }
@@ -17,6 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     if (role !== TeamMemberRoleEnum.superAdmin) {
       throw new Error('Permission denied');
     }
+    console.log('field', field, typeof field);
     // 创建数字人
     const response = await MongoAssistant.create({
       avatar,
@@ -24,9 +32,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       title,
       intro,
       projectId,
+      field,
       teamId,
       tmbId
     });
+    console.log(response);
 
     jsonRes(res, {
       data: response._id

@@ -175,9 +175,20 @@ export const setCookie = (res: NextApiResponse, token: string) => {
     `token=${token}; Path=/; HttpOnly; Max-Age=604800; Samesite=Strict; Secure;`
   );
 };
+
+export const setCookies = (res: NextApiResponse, cookies: Record<string, string>) => {
+  const cookieStrings = Object.entries(cookies).map(
+    ([key, value]) => `${key}=${value}; Path=/; HttpOnly; Max-Age=604800; Samesite=Strict; Secure;`
+  );
+  res.setHeader('Set-Cookie', cookieStrings);
+};
 /* clear cookie */
 export const clearCookie = (res: NextApiResponse) => {
   res.setHeader('Set-Cookie', 'token=; Path=/; Max-Age=0');
+};
+
+export const clearCookies = (res: NextApiResponse) => {
+  res.setHeader('Set-Cookie', 'token=; id_token=; Path=/; Max-Age=0');
 };
 
 /* file permission */

@@ -23,6 +23,11 @@ export type FastLoginProps = {
   code: string;
 };
 
+export type PCKELoginProps = {
+  code: string;
+  state: string;
+};
+
 export type CreateUserParams = {
   username?: string;
   avatar?: string;

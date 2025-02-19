@@ -9,7 +9,7 @@ export enum UserErrEnum {
 }
 const errList = [
   { statusText: UserErrEnum.unAuthUser, message: '找不到该用户' },
-  { statusText: UserErrEnum.binVisitor, message: '您的身份校验未通过' },
+  { statusText: UserErrEnum.unAuthRole, message: '您的身份校验未通过' },
   { statusText: UserErrEnum.binVisitor, message: '您当前身份为游客，无权操作' },
   { statusText: UserErrEnum.balanceNotEnough, message: '账号余额不足~' }
 ];

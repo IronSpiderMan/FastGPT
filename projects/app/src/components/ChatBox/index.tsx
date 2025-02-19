@@ -69,6 +69,8 @@ import MessageInput from './MessageInput';
 import { ModuleOutputKeyEnum } from '@fastgpt/global/core/module/constants';
 import ChatBoxDivider from '../core/chat/Divider';
 import { OutLinkChatAuthProps } from '@fastgpt/global/support/permission/chat';
+import { useUserStore } from '@/web/support/user/useUserStore';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 24);
 
@@ -599,6 +601,7 @@ const ChatBox = (
     },
     [onUpdateVariable]
   );
+  const { userInfo } = useUserStore();
 
   return (
     <Flex flexDirection={'column'} h={'100%'}>
@@ -840,10 +843,12 @@ const ChatBox = (
                           isChatting={index === chatHistory.length - 1 && isChatting}
                         />
 
-                        <ResponseTags
-                          responseData={item.responseData}
-                          showDetail={!shareId && !teamId}
-                        />
+                        {userInfo?.team?.role !== TeamMemberRoleEnum.visitor && (
+                          <ResponseTags
+                            responseData={item.responseData}
+                            showDetail={!shareId && !teamId}
+                          />
+                        )}
 
                         {/* custom feedback */}
                         {item.customFeedbacks && item.customFeedbacks.length > 0 && (

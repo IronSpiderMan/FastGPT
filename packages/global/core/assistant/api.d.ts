@@ -8,6 +8,7 @@ export type CreateAssistantParams = {
   title?: string;
   intro: string;
   projectId?: string;
+  field?: string;
 };
 
 export interface AssistantUpdateParams {
@@ -16,4 +17,5 @@ export interface AssistantUpdateParams {
   intro?: string;
   title?: string;
   projectId?: string;
+  field?: string;
 }

@@ -31,13 +31,6 @@ const Navbar = ({ unread }: { unread: number }) => {
         activeLink: ['/chat']
       },
       {
-        label: t('navbar.Datasets'),
-        icon: 'core/dataset/datasetLight',
-        activeIcon: 'core/dataset/datasetFill',
-        link: `/dataset/list`,
-        activeLink: ['/dataset/list', '/dataset/detail']
-      },
-      {
         label: t('navbar.Apps'),
         icon: 'core/app/aiLight',
         activeIcon: 'core/app/aiFill',
@@ -52,6 +45,16 @@ const Navbar = ({ unread }: { unread: number }) => {
         activeLink: ['/account']
       }
     ];
+    // Visitor不允许看Dataset这一栏
+    if (userInfo?.team?.role !== TeamMemberRoleEnum.visitor) {
+      list.splice(1, 0, {
+        label: t('navbar.Datasets'),
+        icon: 'core/dataset/datasetLight',
+        activeIcon: 'core/dataset/datasetFill',
+        link: `/dataset/list`,
+        activeLink: ['/dataset/list', '/dataset/detail']
+      });
+    }
     if (userInfo?.team?.role === TeamMemberRoleEnum.superAdmin) {
       list.splice(3, 0, {
         label: t('assistant.Assistant'),

@@ -25,7 +25,7 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
       authToken: true,
       authApiKey: true,
       dataId: id,
-      per: 'w'
+      per: 'owner'
     });
 
     // auth team balance

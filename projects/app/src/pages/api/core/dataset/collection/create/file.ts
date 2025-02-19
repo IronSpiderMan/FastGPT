@@ -29,7 +29,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       req,
       authToken: true,
       authApiKey: true,
-      per: 'w',
+      per: 'owner',
       datasetId
     });
 

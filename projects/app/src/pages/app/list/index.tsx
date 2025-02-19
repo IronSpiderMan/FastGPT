@@ -17,6 +17,12 @@ import { useAppStore } from '@/web/core/app/store/useAppStore';
 import PermissionIconText from '@/components/support/permission/IconText';
 import { useUserStore } from '@/web/support/user/useUserStore';
 import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
+import { AppListItemType } from '@fastgpt/global/core/app/type';
+import Field from '@/pages/app/list/component/Field';
+
+type Dictionary<T> = {
+  [key: string]: T;
+};
 
 const MyApps = () => {
   const { toast } = useToast();
@@ -24,6 +30,7 @@ const MyApps = () => {
   const router = useRouter();
   const { userInfo } = useUserStore();
   const { myApps, loadMyApps } = useAppStore();
+  const [groupedApps, setGroupedApps] = useState<Dictionary<AppListItemType[]>>({});
   const [teamsTags, setTeamTags] = useState([]);
   const { openConfirm, ConfirmModal } = useConfirm({
     title: '删除提示',
@@ -55,13 +62,24 @@ const MyApps = () => {
     [toast, loadMyApps]
   );
 
+  useEffect(() => {
+    const tmp: Dictionary<AppListItemType[]> = {};
+    myApps.forEach((app) => {
+      const key = app.assistant?.field || 'default'; // 为空时给默认值
+      if (!tmp[key]) {
+        tmp[key] = [app];
+      } else {
+        tmp[key].push(app);
+      }
+    });
+    setGroupedApps(tmp);
+  }, [myApps]);
+
   /* 加载模型 */
   const { isFetching } = useQuery(['loadApps'], () => loadMyApps(true), {
     refetchOnMount: true
   });
 
-  console.log('................');
-  console.log(userInfo);
   return (
     <PageContainer isLoading={isFetching} insertProps={{ px: [5, '48px'] }}>
       <Flex pt={[4, '30px']} alignItems={'center'} justifyContent={'space-between'}>
@@ -77,109 +95,43 @@ const MyApps = () => {
         {/*  {t('common.New Create')}*/}
         {/*</Button>*/}
       </Flex>
-      <Grid
-        py={[4, 6]}
-        gridTemplateColumns={['1fr', 'repeat(2,1fr)', 'repeat(3,1fr)', 'repeat(4,1fr)']}
-        gridGap={5}
+
+      <Box
+        w={'100%'}
+        h={'auto'}
+        mt={'5'}
+        mb={'5'}
+        p={'5'}
+        borderRadius={'15px'}
+        backgroundColor={'white'}
+        borderWidth={'2px'}
+        borderColor={'gray.100'}
       >
-        {myApps.map((app) => (
-          <MyTooltip
-            key={app._id}
-            label={userInfo?.team.canWrite ? t('app.To Settings') : t('app.To Chat')}
-          >
-            <Box
-              lineHeight={1.5}
-              h={'100%'}
-              py={3}
-              px={5}
-              cursor={'pointer'}
-              borderWidth={'1.5px'}
-              borderColor={'borderColor.low'}
-              bg={'white'}
-              borderRadius={'md'}
-              userSelect={'none'}
-              position={'relative'}
-              display={'flex'}
-              flexDirection={'column'}
-              _hover={{
-                borderColor: 'primary.300',
-                boxShadow: '1.5',
-                '& .delete': {
-                  display: 'flex'
-                },
-                '& .chat': {
-                  display: 'flex'
-                }
-              }}
-              onClick={() => {
-                if (userInfo?.team.canWrite) {
-                  router.push(`/app/detail?appId=${app._id}`);
-                } else {
-                  router.push(`/chat?appId=${app._id}`);
-                }
-              }}
-            >
-              <Flex alignItems={'center'} h={'38px'}>
-                <Avatar src={app.avatar} borderRadius={'md'} w={'28px'} />
-                <Box ml={3}>{app.name}</Box>
-                {app.isOwner && userInfo?.team.canWrite && (
-                  <IconButton
-                    className="delete"
-                    position={'absolute'}
-                    top={4}
-                    right={4}
-                    size={'xsSquare'}
-                    variant={'whiteDanger'}
-                    icon={<MyIcon name={'delete'} w={'14px'} />}
-                    aria-label={'delete'}
-                    display={['', 'none']}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      openConfirm(() => onclickDelApp(app._id))();
-                    }}
-                  />
-                )}
-              </Flex>
-              <Box
-                flex={1}
-                className={'textEllipsis3'}
-                py={2}
-                wordBreak={'break-all'}
-                fontSize={'sm'}
-                color={'myGray.600'}
-              >
-                {app.intro || '还没写介绍~'}
-              </Box>
-              <Flex h={'34px'} alignItems={'flex-end'}>
-                <Box flex={1}>
-                  <PermissionIconText permission={app.permission} color={'myGray.600'} />
-                </Box>
-                {userInfo?.team.canWrite && (
-                  <IconButton
-                    className="chat"
-                    size={'xsSquare'}
-                    variant={'whitePrimary'}
-                    icon={
-                      <MyTooltip label={'去聊天'}>
-                        <MyIcon name={'core/chat/chatLight'} w={'14px'} />
-                      </MyTooltip>
-                    }
-                    aria-label={'chat'}
-                    display={['', 'none']}
-                    onClick={(e) => {
-                      e.stopPropagation();
-                      router.push(`/chat?appId=${app._id}`);
-                    }}
-                  />
-                )}
-              </Flex>
+        {groupedApps &&
+          Object.entries(groupedApps).map(([key, value]) => (
+            <Box key={key}>
+              <Field field={key} apps={groupedApps[key]} onclickDelApp={onclickDelApp} />
             </Box>
-          </MyTooltip>
-        ))}
-      </Grid>
-      {/* (
+          ))}
+        {/*{myApps.map((app: AppListItemType) => (*/}
+        {/*    <Box w={'100%'} h={'200px'} mt={'3'} key={app._id} backgroundColor={'red'}/>*/}
+        {/*))}*/}
+        {/*{Object.keys(groupedApps).forEach((key: string) => {*/}
+        {/*    <Field key={key} field={key} apps={groupedApps[key]} onclickDelApp={onclickDelApp}/>*/}
+        {/*})}*/}
+        {/*{Object.entries(groupedApps).forEach(([key, value]) => (*/}
+        {/*    <Box backgroundColor={"red"}/>*/}
+        {/*))}*/}
+        {/*{groupedApps.map((group)=>(*/}
+        {/*    <Field key={group.field} field={group.field} apps={group.apps} onclickDelApp={onclickDelApp}/>*/}
+        {/*))}*/}
+        {/*{groupedApps.map((group: GroupedAppListItem)=>{*/}
+        {/*    <Field field={group.field} apps={group.apps} onclickDelApp={onclickDelApp}*/}
+        {/*})}*/}
+        {/* (
         <ShareBox></ShareBox>
       ) */}
+      </Box>
 
       {myApps.length === 0 && (
         <Flex mt={'35vh'} flexDirection={'column'} alignItems={'center'}>

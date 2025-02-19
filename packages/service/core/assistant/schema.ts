@@ -47,6 +47,11 @@ const AssistantSchema = new Schema({
   projectId: {
     type: String,
     default: ''
+  },
+  field: {
+    type: String,
+    default: '',
+    required: true
   }
 });
 

@@ -9,6 +9,7 @@ export interface AssistantSchema {
   intro: string;
   updateTime: number;
   projectId: string;
+  field: string;
 }
 
 export type AssistantListItemType = {
@@ -17,6 +18,7 @@ export type AssistantListItemType = {
   avatar: string;
   intro: string;
   title: string;
+  field?: string;
 };
 
 export type AssistantDetailType = AssistantSchema;

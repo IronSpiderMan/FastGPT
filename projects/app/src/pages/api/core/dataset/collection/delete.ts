@@ -21,7 +21,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       authToken: true,
       authApiKey: true,
       collectionId,
-      per: 'w'
+      per: 'owner'
     });
 
     // find all delete id

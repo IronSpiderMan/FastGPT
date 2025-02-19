@@ -7,6 +7,7 @@ import { MongoDataset } from '@fastgpt/service/core/dataset/schema';
 import { mongoRPermission } from '@fastgpt/global/support/permission/utils';
 import { authUserRole } from '@fastgpt/service/support/permission/auth/user';
 import { getVectorModel } from '@fastgpt/service/core/ai/model';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
@@ -19,7 +20,13 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       authApiKey: true
     });
 
-    console.log(teamId, tmbId, teamOwner, role, canWrite);
+    // TODO 待测试是否会导致其它问题
+    if (role === TeamMemberRoleEnum.visitor) {
+      jsonRes(res, {
+        code: 500,
+        error: '无权访问'
+      });
+    }
 
     const datasets = await MongoDataset.find({
       ...mongoRPermission({ teamId, tmbId, role }),
@@ -39,7 +46,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         type: item.type,
         permission: item.permission,
         canWrite,
-        isOwner: teamOwner || String(item.tmbId) === tmbId,
+        isOwner: String(item.tmbId) === tmbId || teamOwner,
         vectorModel: getVectorModel(item.vectorModel)
       }))
     );

@@ -62,7 +62,8 @@
       "Name": "name",
       "Title": "nickname",
       "Intro": "introduction",
-      "ProjectId": "project id"
+      "ProjectId": "project id",
+      "Field": "Field"
     },
     "All Assistants": "Digital Human"
   },
@@ -1110,6 +1111,7 @@
     "Footer Product": "Product",
     "Footer Support": "Support",
     "Login": "Login",
+    "HKULogin": "SSO Login",
     "Open": "",
     "OpenAPI": "OpenAPI",
     "OpenAPI Desc": "",

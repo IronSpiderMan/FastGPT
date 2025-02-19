@@ -6,6 +6,7 @@ import { VariableInputEnum } from '../module/constants';
 import { SelectedDatasetType } from '../module/api';
 import { DatasetSearchModeEnum } from '../dataset/constants';
 import { TeamTagSchema as TeamTagsSchemaType } from '@fastgpt/global/support/user/team/type.d';
+import { AssistantListItemType } from '../assistant/type';
 export interface AppSchema {
   _id: string;
   userId: string;
@@ -32,6 +33,7 @@ export type AppListItemType = {
   assistantId: string;
   isOwner: boolean;
   permission: `${PermissionTypeEnum}`;
+  assistant: AssistantListItemType | null;
 };
 
 export type AppDetailType = AppSchema & {

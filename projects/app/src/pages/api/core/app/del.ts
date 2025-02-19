@@ -7,6 +7,7 @@ import { MongoOutLink } from '@fastgpt/service/support/outLink/schema';
 import { authApp } from '@fastgpt/service/support/permission/auth/app';
 import { MongoChatItem } from '@fastgpt/service/core/chat/chatItemSchema';
 import { mongoSessionRun } from '@fastgpt/service/common/mongo/sessionRun';
+import { authUserIsSuperAdmin } from '@fastgpt/service/support/permission/auth/user';
 
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
@@ -18,7 +19,10 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     }
 
     // 凭证校验
-    await authApp({ req, authToken: true, appId, per: 'owner' });
+    // await authApp({ req, authToken: true, appId, per: 'owner' });
+    // TODO 考虑是否给owner删除权限
+    // 只有superAdmin才有对app的 删除权限
+    await authUserIsSuperAdmin({ req, authToken: true });
 
     // 删除对应的聊天
     await mongoSessionRun(async (session) => {

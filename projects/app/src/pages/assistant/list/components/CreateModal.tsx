@@ -8,7 +8,8 @@ import {
   Input,
   useTheme,
   Text,
-  Textarea
+  Textarea,
+  Select
 } from '@chakra-ui/react';
 import { useSelectFile } from '@/web/common/file/hooks/useSelectFile';
 import { useForm } from 'react-hook-form';
@@ -24,6 +25,7 @@ import MyTooltip from '@/components/MyTooltip';
 import MyModal from '@/components/MyModal';
 import { useTranslation } from 'next-i18next';
 import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
+import { AssistantFields } from '@fastgpt/global/core/assistant/constants';
 
 type FormType = {
   avatar: string;
@@ -31,6 +33,7 @@ type FormType = {
   title: string;
   intro: string;
   projectId: string;
+  field: string;
 };
 
 const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) => {
@@ -45,7 +48,8 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
       name: '',
       title: '',
       intro: '',
-      projectId: ''
+      projectId: '',
+      field: ''
     }
   });
 
@@ -84,7 +88,8 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
         name: data.name,
         title: data.title,
         intro: data.intro,
-        projectId: data.projectId
+        projectId: data.projectId,
+        field: data.field
       });
     },
     onSuccess(id: string) {
@@ -151,6 +156,31 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
               required: t('core.app.error.App name can not be empty')
             })}
           />
+        </Flex>
+        <Flex mt={3} alignItems={'center'}>
+          <Text w={'55px'}>领域</Text>
+          <Select
+            flex={1}
+            ml={4}
+            bg={'myWhite.600'}
+            {...register('field', {
+              required: t('core.app.error.App.name can not be empty')
+            })}
+          >
+            {AssistantFields.map((field) => (
+              <option key={field.label} value={field.value}>
+                {field.value}
+              </option>
+            ))}
+          </Select>
+          {/*<Input*/}
+          {/*  flex={1}*/}
+          {/*  ml={4}*/}
+          {/*  bg={'myWhite.600'}*/}
+          {/*  {...register('projectId', {*/}
+          {/*    required: t('core.app.error.App name can not be empty')*/}
+          {/*  })}*/}
+          {/*/>*/}
         </Flex>
         <Flex mt={3} alignItems={'center'}>
           <Text w={'55px'}>简介</Text>

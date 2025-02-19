@@ -93,4 +93,4 @@ export const delUserById = (id: string) => DELETE(`/support/user/del?userId=${id
 
 export const putUser = (data: UpdateUserParams) => PUT(`/support/user/update`, data);
 
-export const getUserById = (id: string) => PUT(`/support/user?userId=${id}`);
+export const getUserById = (id: string) => GET(`/support/user?userId=${id}`);

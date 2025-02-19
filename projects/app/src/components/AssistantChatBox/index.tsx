@@ -21,6 +21,7 @@ import {
   AlertDialogHeader,
   AlertDialogOverlay,
   Box,
+  calc,
   Center,
   CircularProgress,
   Flex
@@ -40,6 +41,7 @@ import { ModuleOutputKeyEnum } from '@fastgpt/global/core/module/constants';
 import { OutLinkChatAuthProps } from '@fastgpt/global/support/permission/chat';
 import { useAppStore } from '@/web/core/app/store/useAppStore';
 import { useQuery } from '@tanstack/react-query';
+import ChatDialog from '@/components/AssistantChatBox/ChatDialog';
 
 const nanoid = customAlphabet('abcdefghijklmnopqrstuvwxyz1234567890', 24);
 
@@ -59,7 +61,6 @@ export type AssistantComponentRef = {
   getChatHistories: () => ChatSiteItemType[];
   resetVariables: (data?: Record<string, any>) => void;
   resetHistory: (history: ChatSiteItemType[]) => void;
-  scrollToBottom: (behavior?: 'smooth' | 'auto') => void;
   sendPrompt: (question: string) => void;
   start: () => void;
   stop: () => void;
@@ -122,8 +123,10 @@ const AssistantChatBox = (
   const avatarWsRef = useRef(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const cancelRef = React.useRef(null);
-  const { appDetail, loadAppDetail } = useAppStore();
+  const { loadAppDetail } = useAppStore();
   const [avatarId, setAvatarId] = useState<string>('');
+  const [question, setQuestion] = useState<string>('你好啊！');
+  const [answer, setAnswer] = useState<string>('你好，有什么可以帮助你的！');
 
   useQuery([appId], () => loadAppDetail(appId ? appId : '', true), {
     onError(err: any) {
@@ -134,8 +137,6 @@ const AssistantChatBox = (
       router.replace('/app/list');
     },
     onSuccess(data: any) {
-      console.log('App Detail', data);
-      // console.log(data.assistant.projectId)
       setAvatarId(data.assistant.projectId);
     }
   });
@@ -175,62 +176,35 @@ const AssistantChatBox = (
         return false;
       }
     }
-
     return variableInputFinish;
   }, [chatHistory.length, variableInputFinish, filterVariableModules, variables]);
 
-  // 滚动到底部
-  const scrollToBottom = (behavior: 'smooth' | 'auto' = 'smooth') => {
-    if (!ChatBoxRef.current) return;
-    ChatBoxRef.current.scrollTo({
-      top: ChatBoxRef.current.scrollHeight,
-      behavior
-    });
-  };
-
-  // 聊天信息生成中……获取当前滚动条位置，判断是否需要滚动到底部
-  const generatingScroll = useCallback(
-    throttle(() => {
-      if (!ChatBoxRef.current) return;
-      const isBottom =
-        ChatBoxRef.current.scrollTop + ChatBoxRef.current.clientHeight + 150 >=
-        ChatBoxRef.current.scrollHeight;
-
-      isBottom && scrollToBottom('auto');
-    }, 100),
-    []
-  );
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  const generatingMessage = useCallback(
-    ({ text = '', status, name }: generatingMessageProps) => {
-      setChatHistory((state) =>
-        state.map((item, index) => {
-          if (index !== state.length - 1) return item;
-          return {
-            ...item,
-            ...(text
-              ? {
-                  value: item.value + text
-                }
-              : {}),
-            ...(status && name
-              ? {
-                  status,
-                  moduleName: name
-                }
-              : {})
-          };
-        })
-      );
-      generatingScroll();
-    },
-    [generatingScroll]
-  );
+  const generatingMessage = useCallback(({ text = '', status, name }: generatingMessageProps) => {
+    setChatHistory((state) =>
+      state.map((item, index) => {
+        if (index !== state.length - 1) return item;
+        return {
+          ...item,
+          ...(text
+            ? {
+                value: item.value + text
+              }
+            : {}),
+          ...(status && name
+            ? {
+                status,
+                moduleName: name
+              }
+            : {})
+        };
+      })
+    );
+  }, []);
 
   // 重置输入内容
   const resetInputVal = useCallback((val: string) => {
     if (!TextareaDom.current) return;
-
     setTimeout(() => {
       /* 回到最小高度 */
       if (TextareaDom.current) {
@@ -272,8 +246,8 @@ const AssistantChatBox = (
           return;
         }
 
-        console.log('聊天记录');
-        console.log(history);
+        // 设置ChatDialog的内容
+        setQuestion(inputVal.trim());
 
         const newChatList: ChatSiteItemType[] = [
           ...history,
@@ -290,15 +264,10 @@ const AssistantChatBox = (
             status: 'loading'
           }
         ];
-
         // 插入内容
         setChatHistory(newChatList);
-
         // 清空输入内容
         resetInputVal('');
-        setTimeout(() => {
-          scrollToBottom();
-        }, 100);
         try {
           // create abort obj
           const abortSignal = new AbortController();
@@ -326,6 +295,7 @@ const AssistantChatBox = (
 
           isNewChatReplace.current = isNewChat;
 
+          setAnswer(responseText.trim());
           console.log('===============================================================');
           console.log('回答内容：');
           console.log(responseText);
@@ -389,7 +359,6 @@ const AssistantChatBox = (
       setVariableInputFinish(!!e.length);
       setChatHistory(e);
     },
-    scrollToBottom,
     sendPrompt: (question: string) => {
       sendPrompt({
         inputVal: question
@@ -412,7 +381,6 @@ const AssistantChatBox = (
   }, [router.query]);
 
   useEffect(() => {
-    console.log('useEffect中：', avatarId);
     if (avatarId && avatarWsRef && avatarWsRef.current) {
       (avatarWsRef.current as any).connect(avatarId);
     }
@@ -432,6 +400,9 @@ const AssistantChatBox = (
           onReady: () => {
             console.log('连接成功');
             setIsLoading(false);
+          },
+          onError: (error: string) => {
+            console.log(error);
           }
         },
         true
@@ -445,8 +416,13 @@ const AssistantChatBox = (
   }, []);
 
   return (
-    <Flex flexDirection={'column'} h={'100%'}>
-      {/*<Script src='/js/avatar_websocket.js' strategy="lazyOnload"></Script>*/}
+    <Flex
+      flexDirection={'column'}
+      position="relative"
+      h={'100%'}
+      // backgroundImage="linear-gradient(rgba(255, 255,255,0.5), rgba(255, 255,255,0.5)), url('/imgs/bg.png')"
+      backgroundImage="url('/imgs/bg.png')"
+    >
       <Script src="/js/html2pdf.bundle.min.js" strategy="lazyOnload"></Script>
       <AlertDialog isOpen={isLoading} leastDestructiveRef={cancelRef} onClose={() => {}}>
         <AlertDialogOverlay>
@@ -466,10 +442,11 @@ const AssistantChatBox = (
       {/* chat box container */}
       <Box ref={ChatBoxRef} flex={'1 0 0'} h={0} w={'100%'} overflow={'overlay'} px={[4, 0]} pb={3}>
         <Box id="chat-container" maxW={['100%', '92%']} h={'100%'} mx={'auto'}>
-          <Center w="100%" h="100%">
+          <Box h={'calc(100% - 400px)'}></Box>
+          <Center w="100%" h="400px">
             <Box
               id={'content'}
-              h="400px"
+              h={'400px'}
               onClick={async () => {
                 if (avatarWsRef.current) {
                   try {
@@ -482,6 +459,9 @@ const AssistantChatBox = (
             />
           </Center>
         </Box>
+      </Box>
+      <Box position="absolute" bottom={'200px'} w={'240px'} right="20px">
+        <ChatDialog question={question} answer={answer} />
       </Box>
       {/* message input */}
       {onStartChat && variableIsFinish && active && (

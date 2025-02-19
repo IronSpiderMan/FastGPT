@@ -27,6 +27,7 @@ async function getTeamMember(match: Record<string, any>): Promise<TeamItemType> 
     role: tmb.role,
     status: tmb.status,
     defaultTeam: tmb.defaultTeam,
+    // TODO 需要博士本人才能对当前应用有canWrite的权限
     canWrite: tmb.role !== TeamMemberRoleEnum.visitor
   };
 }

@@ -18,7 +18,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       authToken: true,
       authApiKey: true,
       datasetId: body.datasetId,
-      per: 'w'
+      per: 'owner'
     });
 
     const { _id } = await createOneCollection({

@@ -31,7 +31,7 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
       authToken: true,
       authApiKey: true,
       collectionId,
-      per: 'w'
+      per: 'owner'
     });
 
     // auth dataset limit

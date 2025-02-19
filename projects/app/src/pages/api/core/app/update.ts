@@ -7,6 +7,7 @@ import { authApp } from '@fastgpt/service/support/permission/auth/app';
 import { FlowNodeTypeEnum } from '@fastgpt/global/core/module/node/constant';
 import { ModuleInputKeyEnum } from '@fastgpt/global/core/module/constants';
 import { getLLMModel } from '@fastgpt/service/core/ai/model';
+import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 
 /* 获取我的模型 */
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
@@ -22,7 +23,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
 
     // 凭证校验
     const app = await authApp({ req, authToken: true, appId, per: permission ? 'owner' : 'w' });
-    assistantId = app.app.assistantId;
 
     // check modules
     // 1. dataset search limit, less than model quoteMaxToken
@@ -34,7 +34,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
             item.inputs.find((item) => item.key === ModuleInputKeyEnum.aiModel)?.value || '';
           const chatModel = getLLMModel(model);
           const quoteMaxToken = chatModel.quoteMaxToken || 3000;
-          assistantId = item.assistantId || app.app.assistantId;
+          if (app.role === TeamMemberRoleEnum.superAdmin) {
+            assistantId = item.assistantId || app.app.assistantId;
+          } else {
+            assistantId = item.assistantId || '';
+          }
 
           maxTokens = Math.max(maxTokens, quoteMaxToken);
         }
@@ -65,7 +69,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         simpleTemplateId,
         avatar,
         intro,
-        assistantId,
+        ...(assistantId && { assistantId }),
         permission,
         teamTags: teamTags,
         ...(modules && {

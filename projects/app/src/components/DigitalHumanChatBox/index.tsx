@@ -215,7 +215,6 @@ const DigitalHumanChatBox = forwardRef<DigitalHumanChatBoxHandle, DigitalHumanCh
               h="100%"
               className="content"
               onClick={() => {
-                console.log(process.env.RAG_BASE_URL);
                 if (client) {
                   client.breakTalking();
                 }

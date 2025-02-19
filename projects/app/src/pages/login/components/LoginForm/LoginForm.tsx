@@ -1,5 +1,5 @@
 import React, { useState, Dispatch, useCallback } from 'react';
-import { FormControl, Flex, Input, Button, Box, Link } from '@chakra-ui/react';
+import { FormControl, Flex, Input, Button, Box, Link, Image } from '@chakra-ui/react';
 import { useForm } from 'react-hook-form';
 import { LoginPageTypeEnum } from '@/constants/user';
 import { postLogin } from '@/web/support/user/api';
@@ -9,6 +9,11 @@ import { useSystemStore } from '@/web/common/system/useSystemStore';
 import { getDocPath } from '@/web/common/system/doc';
 import { useTranslation } from 'next-i18next';
 import FormLayout from './components/FormLayout';
+import { LOGO_ICON } from '@fastgpt/global/common/system/constants';
+import { generateCodeChallenge, getSSOAuthorizeUrl } from '@/constants/sso';
+import { useRouter } from 'next/router';
+import auth from '@/components/Layout/auth';
+import { signinOidc } from '@/web/common/sso/api';
 
 interface Props {
   setPageType: Dispatch<`${LoginPageTypeEnum}`>;
@@ -24,6 +29,7 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
   const { t } = useTranslation();
   const { toast } = useToast();
   const { feConfigs } = useSystemStore();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -57,6 +63,11 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
     [loginSuccess, toast]
   );
 
+  const loginBySSO = async () => {
+    const { codeVerifier, codeChallenge } = await generateCodeChallenge();
+    const authUrl = getSSOAuthorizeUrl(codeVerifier, codeChallenge);
+    return await fetch(authUrl);
+  };
   const isCommunityVersion = feConfigs?.show_register === false && !feConfigs?.isPlus;
 
   const loginOptions = [
@@ -68,6 +79,13 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
   const placeholder = isCommunityVersion
     ? t('support.user.login.Root login')
     : loginOptions.join('/');
+
+  const redirectToSSO = () => {
+    generateCodeChallenge().then(({ codeVerifier, codeChallenge }) => {
+      const authUrl = getSSOAuthorizeUrl(codeVerifier, codeChallenge);
+      router.push(authUrl);
+    });
+  };
 
   return (
     <FormLayout setPageType={setPageType} pageType={LoginPageTypeEnum.passwordLogin}>
@@ -138,6 +156,17 @@ const LoginForm = ({ setPageType, loginSuccess }: Props) => {
           onClick={handleSubmit(onclickLogin)}
         >
           {t('home.Login')}
+        </Button>
+        <Button
+          type="submit"
+          w={'100%'}
+          size={['md', 'lg']}
+          colorScheme="red"
+          isLoading={requesting}
+          leftIcon={<Image src={LOGO_ICON} w={'20px'} />}
+          onClick={redirectToSSO}
+        >
+          {t('home.HKULogin')}
         </Button>
 
         {feConfigs?.show_register && (

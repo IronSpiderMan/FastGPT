@@ -29,6 +29,29 @@ export async function authUserNotVisitor(props: AuthModeType): Promise<
   };
 }
 
+export async function authUserIsSuperAdmin(props: AuthModeType): Promise<
+  AuthResponseType & {
+    team: TeamItemType;
+    role: `${TeamMemberRoleEnum}`;
+  }
+> {
+  const { teamId, tmbId } = await parseHeaderCert(props);
+  const team = await getTmbInfoByTmbId({ tmbId });
+
+  if (team.role !== TeamMemberRoleEnum.superAdmin) {
+    return Promise.reject(UserErrEnum.unAuthRole);
+  }
+
+  return {
+    teamId,
+    tmbId,
+    team,
+    role: team.role,
+    isOwner: team.role === TeamMemberRoleEnum.superAdmin || team.role === TeamMemberRoleEnum.owner, // teamOwner
+    canWrite: true
+  };
+}
+
 /* auth user role  */
 export async function authUserRole(props: AuthModeType): Promise<
   AuthResponseType & {

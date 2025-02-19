@@ -46,7 +46,7 @@ class AvatarWebsocket {
         this.onTalkEnd = callBacks.onTalkEnd || (() => {
         })
         // 当发送错误时调用
-        this.onError = callBacks.onError || (() => {
+        this.onError = callBacks.onError || ((error) => {
         });
     }
 
@@ -80,15 +80,15 @@ class AvatarWebsocket {
                         let reversedVideoQueue = this.videoQueue.slice().reverse();
                         this.videoQueue = this.videoQueue.concat(reversedVideoQueue);
                         this.playVideoInterval = setInterval(() => this.playVideoQueue(), 1000 / 25)
+                        // 默认视频开始播放时准备完成
+                        this.onReady();
                     }
                 } else {
                     const blob = new Blob([event.data], {type: "image/jpeg"})
                     this.videoQueue.push(blob);
                 }
             }
-            this.videoSocket.onclose = () => {
-                this.onReady();
-            }
+            this.videoSocket.onclose = () => {}
         }
     }
 
@@ -280,6 +280,11 @@ class AvatarWebsocket {
             context.clearRect(0, 0, this.canvasEle.width, this.canvasEle.height);
 
             // 绘制图像
+            if (this.canvasEle.height === 0 || this.canvasEle.width === 0) {
+                this.onError("画布不见了");
+                this.close();
+                return false;
+            }
             context.drawImage(img, 0, 0, this.canvasEle.width, this.canvasEle.height);
 
             // 抠图：将白色背景变为透明
@@ -303,6 +308,7 @@ class AvatarWebsocket {
             URL.revokeObjectURL(url);
         }
         img.src = url;
+        return true;
     }
 
     playVideoQueue() {
@@ -397,4 +403,5 @@ class AvatarWebsocket {
     }
 
 }
+
 window.AvatarWebsocket = AvatarWebsocket;

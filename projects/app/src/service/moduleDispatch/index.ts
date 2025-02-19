@@ -217,6 +217,9 @@ export async function dispatchModules({
       }
       return {};
     })();
+    console.log('dispatchRes', '=====================================================');
+    console.log(dispatchRes);
+    console.log('dispatchRes', '=====================================================');
 
     // format response data. Add modulename and moduletype
     const formatResponseData = (() => {

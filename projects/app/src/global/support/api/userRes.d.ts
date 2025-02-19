@@ -3,6 +3,7 @@ import type { PromotionRecordSchema } from '@fastgpt/global/support/activity/typ
 export interface ResLogin {
   user: UserType;
   token: string;
+  id_token?: string;
 }
 
 export interface PromotionRecordType {

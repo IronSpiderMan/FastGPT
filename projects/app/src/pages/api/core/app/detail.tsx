@@ -26,9 +26,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       ...app, // Ensure app is converted to a plain object if it's a Mongoose document
       assistant: assistant
     };
-
-    console.log(responseData);
-
     jsonRes(res, {
       data: responseData
     });
