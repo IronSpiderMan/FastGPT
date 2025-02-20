@@ -24,6 +24,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         avatar: assistant.avatar,
         title: assistant.title,
         name: assistant.name,
+        graduationSchool: assistant.graduationSchool,
         intro: assistant.intro
       }))
     });

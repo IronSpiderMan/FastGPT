@@ -19,6 +19,7 @@ import { useUserStore } from '@/web/support/user/useUserStore';
 import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 import { AppListItemType } from '@fastgpt/global/core/app/type';
 import Field from '@/pages/app/list/component/Field';
+import { forEach } from 'lodash';
 
 type Dictionary<T> = {
   [key: string]: T;
@@ -65,12 +66,20 @@ const MyApps = () => {
   useEffect(() => {
     const tmp: Dictionary<AppListItemType[]> = {};
     myApps.forEach((app) => {
-      const key = app.assistant?.field || 'default'; // 为空时给默认值
-      if (!tmp[key]) {
-        tmp[key] = [app];
-      } else {
-        tmp[key].push(app);
-      }
+      const fields = app.assistant?.fields || ['default'];
+      fields.forEach((field: string, index: number, array: string[]) => {
+        if (!tmp[field]) {
+          tmp[field] = [app];
+        } else {
+          tmp[field].push(app);
+        }
+      });
+      // const key = app.assistant?.field || 'default'; // 为空时给默认值
+      // if (!tmp[key]) {
+      //   tmp[key] = [app];
+      // } else {
+      //   tmp[key].push(app);
+      // }
     });
     setGroupedApps(tmp);
   }, [myApps]);

@@ -5,7 +5,7 @@ import { useAssistantStore } from '@/web/core/assistant/store/useAssistantStore'
 import { useForm } from 'react-hook-form';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { useSelectFile } from '@/web/common/file/hooks/useSelectFile';
-import React, { useCallback, useEffect } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 import { compressImgFileAndUpload } from '@/web/common/file/controller';
 import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
 import MyIcon from '@fastgpt/web/components/common/Icon';
@@ -15,7 +15,8 @@ import { useRouter } from 'next/router';
 import { useLoading } from '@/web/common/hooks/useLoading';
 import type { UserType } from '@fastgpt/global/support/user/type';
 import { AssistantDetailType } from '@fastgpt/global/core/assistant/type';
-import { AssistantFields } from '@fastgpt/global/core/assistant/constants';
+import { AssistantFieldEnum, AssistantFields } from '@fastgpt/global/core/assistant/constants';
+import MyCheckbox from '@/components/MyCheckbox';
 
 type FormType = {
   avatar: string;
@@ -23,7 +24,8 @@ type FormType = {
   title: string;
   intro: string;
   projectId: string;
-  field: string;
+  fields: string[];
+  graduationSchool: string;
 };
 
 const AssistantInfo = () => {
@@ -38,7 +40,8 @@ const AssistantInfo = () => {
     setValue,
     getValues,
     handleSubmit,
-    formState: { isDirty }
+    formState: { isDirty },
+    trigger
   } = useForm<FormType>({
     defaultValues: {
       avatar: '/icon/logo.svg',
@@ -46,7 +49,7 @@ const AssistantInfo = () => {
       title: assistantDetail?.title,
       intro: assistantDetail?.intro,
       projectId: assistantDetail?.projectId,
-      field: assistantDetail?.field
+      fields: assistantDetail.fields
     }
   });
   const router = useRouter();
@@ -56,6 +59,7 @@ const AssistantInfo = () => {
     fileType: '.jpg,.png',
     multiple: false
   });
+  const [chooseFields, setChooseFields] = useState([AssistantFieldEnum.wetProcess as string]);
   const onclickSave = useCallback(
     async (data: AssistantDetailType) => {
       await updateAssistantDetail(assistantId, {
@@ -76,8 +80,17 @@ const AssistantInfo = () => {
     setValue('title', assistantDetail.title);
     setValue('intro', assistantDetail.intro);
     setValue('projectId', assistantDetail.projectId);
-    setValue('field', assistantDetail.field);
+    setValue('fields', assistantDetail.fields);
+    setValue('graduationSchool', assistantDetail.graduationSchool);
+    setChooseFields(assistantDetail.fields);
   }, [assistantDetail, setValue]);
+
+  const handleChooseFields = (fields: string[]) => {
+    setChooseFields(fields);
+    setValue('fields', fields, {
+      shouldDirty: true
+    });
+  };
 
   const onSelectFile = useCallback(
     async (e: File[]) => {
@@ -205,20 +218,40 @@ const AssistantInfo = () => {
           />
         </Flex>
         <Flex alignItems={'center'} mt={6}>
-          <Box flex={'0 0 80px'}>{t('assistant.edit.Field')}:&nbsp;</Box>
-          <Select
+          <Box flex={'0 0 80px'}>{t('assistant.edit.ProjectId')}:&nbsp;</Box>
+          <Input
             flex={1}
             bg={'myWhite.600'}
-            {...register('field', {
+            {...register('graduationSchool', {
               required: t('core.app.error.App name can not be empty')
             })}
-          >
-            {AssistantFields.map((field) => (
-              <option key={field.label} value={field.value}>
-                {field.value}
-              </option>
-            ))}
-          </Select>
+          />
+        </Flex>
+        <Flex alignItems={'center'} mt={6}>
+          <Box flex={'0 0 80px'}>{t('assistant.edit.Field')}:&nbsp;</Box>
+          <MyCheckbox
+            {...register('fields', {
+              required: t('core.app.error.App name can not be empty')
+            })}
+            placeholder="请选择领域"
+            value={chooseFields}
+            list={AssistantFields}
+            onChange={handleChooseFields}
+            width="200px"
+          />
+          {/*<Select*/}
+          {/*  flex={1}*/}
+          {/*  bg={'myWhite.600'}*/}
+          {/*  {...register('field', {*/}
+          {/*    required: t('core.app.error.App name can not be empty')*/}
+          {/*  })}*/}
+          {/*>*/}
+          {/*  {AssistantFields.map((field) => (*/}
+          {/*    <option key={field.label} value={field.value}>*/}
+          {/*      {field.value}*/}
+          {/*    </option>*/}
+          {/*  ))}*/}
+          {/*</Select>*/}
           {/*<Input*/}
           {/*  flex={1}*/}
           {/*  bg={'myWhite.600'}*/}

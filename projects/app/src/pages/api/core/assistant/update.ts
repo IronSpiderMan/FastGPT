@@ -10,7 +10,8 @@ import { TeamMemberRoleEnum } from '@fastgpt/global/support/user/team/constant';
 export default async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
-    const { name, avatar, title, intro, projectId, field } = req.body as AssistantUpdateParams;
+    const { name, avatar, title, intro, projectId, fields, graduationSchool } =
+      req.body as AssistantUpdateParams;
     const { assistantId } = req.query as { assistantId: string };
     if (!assistantId) {
       throw new Error('assistantId is empty');
@@ -19,6 +20,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     if (role !== TeamMemberRoleEnum.superAdmin) {
       throw new Error('Permission denied');
     }
+    console.log(graduationSchool);
     // 更新模型
     await MongoAssistant.updateOne(
       {
@@ -30,7 +32,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         avatar,
         intro,
         projectId,
-        field
+        fields,
+        graduationSchool
       }
     );
     jsonRes(res);

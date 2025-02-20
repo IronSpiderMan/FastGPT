@@ -15,7 +15,8 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       title,
       intro,
       projectId,
-      field
+      fields,
+      graduationSchool
     } = req.body as CreateAssistantParams;
     if (!name) {
       throw new Error('缺少参数');
@@ -24,7 +25,6 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
     if (role !== TeamMemberRoleEnum.superAdmin) {
       throw new Error('Permission denied');
     }
-    console.log('field', field, typeof field);
     // 创建数字人
     const response = await MongoAssistant.create({
       avatar,
@@ -32,12 +32,11 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       title,
       intro,
       projectId,
-      field,
+      fields,
+      graduationSchool,
       teamId,
       tmbId
     });
-    console.log(response);
-
     jsonRes(res, {
       data: response._id
     });

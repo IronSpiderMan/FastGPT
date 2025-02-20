@@ -25,7 +25,10 @@ import MyTooltip from '@/components/MyTooltip';
 import MyModal from '@/components/MyModal';
 import { useTranslation } from 'next-i18next';
 import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
-import { AssistantFields } from '@fastgpt/global/core/assistant/constants';
+import { AssistantFieldEnum, AssistantFields } from '@fastgpt/global/core/assistant/constants';
+import MyRadio from '@/components/common/MyRadio';
+import MyCheckbox from '@/components/MyCheckbox';
+import MySelect from '@/components/Select';
 
 type FormType = {
   avatar: string;
@@ -33,7 +36,8 @@ type FormType = {
   title: string;
   intro: string;
   projectId: string;
-  field: string;
+  graduationSchool: string;
+  fields: string[];
 };
 
 const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: () => void }) => {
@@ -41,6 +45,7 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
   const [refresh, setRefresh] = useState(false);
   const { toast } = useToast();
   const router = useRouter();
+  const [chooseFields, setChooseFields] = useState([AssistantFieldEnum.wetProcess]);
   const { isPc, feConfigs } = useSystemStore();
   const { register, setValue, getValues, handleSubmit } = useForm<FormType>({
     defaultValues: {
@@ -49,7 +54,8 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
       title: '',
       intro: '',
       projectId: '',
-      field: ''
+      graduationSchool: '',
+      fields: []
     }
   });
 
@@ -83,13 +89,15 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
 
   const { mutate: onclickCreate, isLoading: creating } = useRequest({
     mutationFn: async (data: FormType) => {
+      console.log(data);
       return postCreateAssistant({
         avatar: data.avatar,
         name: data.name,
         title: data.title,
         intro: data.intro,
         projectId: data.projectId,
-        field: data.field
+        graduationSchool: data.graduationSchool,
+        fields: data.fields
       });
     },
     onSuccess(id: string) {
@@ -158,29 +166,31 @@ const CreateModal = ({ onClose, onSuccess }: { onClose: () => void; onSuccess: (
           />
         </Flex>
         <Flex mt={3} alignItems={'center'}>
-          <Text w={'55px'}>领域</Text>
-          <Select
+          <Text w={'55px'}>毕业学校</Text>
+          <Input
             flex={1}
             ml={4}
             bg={'myWhite.600'}
-            {...register('field', {
-              required: t('core.app.error.App.name can not be empty')
+            {...register('graduationSchool', {
+              required: t('core.app.error.App name can not be empty')
             })}
-          >
-            {AssistantFields.map((field) => (
-              <option key={field.label} value={field.value}>
-                {field.value}
-              </option>
-            ))}
-          </Select>
-          {/*<Input*/}
-          {/*  flex={1}*/}
-          {/*  ml={4}*/}
-          {/*  bg={'myWhite.600'}*/}
-          {/*  {...register('projectId', {*/}
-          {/*    required: t('core.app.error.App name can not be empty')*/}
-          {/*  })}*/}
-          {/*/>*/}
+          />
+        </Flex>
+        <Flex mt={3} alignItems={'center'}>
+          <Text w={'55px'}>领域</Text>
+          <MyCheckbox
+            {...register('fields', {
+              required: t('core.app.error.App name can not be empty')
+            })}
+            placeholder="请选择领域"
+            value={chooseFields}
+            list={AssistantFields}
+            onChange={(value) => {
+              setChooseFields(value);
+              setValue('fields', value);
+            }}
+            width="200px"
+          />
         </Flex>
         <Flex mt={3} alignItems={'center'}>
           <Text w={'55px'}>简介</Text>

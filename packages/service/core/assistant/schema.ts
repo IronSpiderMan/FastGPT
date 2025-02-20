@@ -48,10 +48,13 @@ const AssistantSchema = new Schema({
     type: String,
     default: ''
   },
-  field: {
-    type: String,
-    default: '',
+  fields: {
+    type: [String],
+    default: [],
     required: true
+  },
+  graduationSchool: {
+    type: String
   }
 });
 

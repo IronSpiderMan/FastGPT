@@ -10,6 +10,7 @@ export const defaultAssistant: AssistantSchema = {
   avatar: '/icon/logo.svg',
   intro: '',
   projectId: '',
-  field: '光刻区',
+  fields: [],
+  graduationSchool: '',
   updateTime: Date.now()
 };

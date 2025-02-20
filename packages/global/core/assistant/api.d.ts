@@ -7,15 +7,17 @@ export type CreateAssistantParams = {
   avatar?: string;
   title?: string;
   intro: string;
+  graduationSchool?: string;
   projectId?: string;
-  field?: string;
+  fields?: string[];
 };
 
 export interface AssistantUpdateParams {
   name?: string;
   avatar?: string;
   intro?: string;
+  graduationSchool?: string;
   title?: string;
   projectId?: string;
-  field?: string;
+  fields?: string[];
 }

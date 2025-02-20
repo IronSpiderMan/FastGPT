@@ -85,7 +85,7 @@ const Field = ({ field, apps, onclickDelApp }: AppGroupProps) => {
               }}
             >
               <Flex alignItems={'center'} h={'50px'}>
-                <Avatar src={app.avatar} borderRadius={'md'} w={'35px'} />
+                <Avatar src={app.avatar} borderRadius={'md'} w={'45px'} />
                 <Flex flexDirection={'column'}>
                   <Box
                     ml={3}
@@ -100,7 +100,7 @@ const Field = ({ field, apps, onclickDelApp }: AppGroupProps) => {
                     color={'#98A0A4'}
                     // style={{writingMode: 'vertical-rl'}}
                   >
-                    毕业学校：{app.name.slice(0, 3)}
+                    毕业学校：{app.assistant?.graduationSchool}
                   </Box>
                 </Flex>
                 {/*{app.isOwner && userInfo?.team.canWrite && (*/}
