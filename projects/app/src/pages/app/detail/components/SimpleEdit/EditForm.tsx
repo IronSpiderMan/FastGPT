@@ -300,6 +300,7 @@ const EditForm = ({
             <Flex alignItems={'center'} mt={5}>
               <Box {...LabelStyles}>{t('assistant.Assistant')}</Box>
               <Box flex={'1 0 0'}>
+                {/*只有超级管理员才能编辑数字人信息*/}
                 {userInfo?.team.role === TeamMemberRoleEnum.superAdmin ? (
                   <MySelect
                     width={'100%'}

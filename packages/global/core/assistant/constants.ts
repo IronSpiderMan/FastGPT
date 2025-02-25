@@ -4,7 +4,8 @@ export enum AssistantFieldEnum {
   etching = '刻蚀',
   lithography = '光刻',
   metrology = '量测',
-  administration = '行政'
+  administration = '行政',
+  bonding = '键合'
 }
 
 export const AssistantFields = [
@@ -13,5 +14,6 @@ export const AssistantFields = [
   { label: AssistantFieldEnum.etching, value: AssistantFieldEnum.etching },
   { label: AssistantFieldEnum.lithography, value: AssistantFieldEnum.lithography },
   { label: AssistantFieldEnum.metrology, value: AssistantFieldEnum.metrology },
-  { label: AssistantFieldEnum.administration, value: AssistantFieldEnum.administration }
+  { label: AssistantFieldEnum.administration, value: AssistantFieldEnum.administration },
+  { label: AssistantFieldEnum.bonding, value: AssistantFieldEnum.bonding }
 ];

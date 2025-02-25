@@ -15,6 +15,7 @@ import Avatar from '@/components/Avatar';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import TagsEditModal from './TagsEditModal';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
+import { useUserStore } from '@/web/support/user/useUserStore';
 const InfoModal = dynamic(() => import('../InfoModal'));
 
 const AppCard = ({ appId }: { appId: string }) => {
@@ -23,6 +24,7 @@ const AppCard = ({ appId }: { appId: string }) => {
   const { toast } = useToast();
   const { appDetail } = useAppStore();
   const { feConfigs } = useSystemStore();
+  const { userInfo } = useUserStore();
   const [settingAppInfo, setSettingAppInfo] = useState<AppSchema>();
   const [TeamTagsSet, setTeamTagsSet] = useState<AppSchema>();
 
@@ -139,7 +141,7 @@ const AppCard = ({ appId }: { appId: string }) => {
                 {t('common.Team Tags Set')}
               </Button>
             )}
-            {appDetail.isOwner && (
+            {(appDetail.isOwner || userInfo?.team?.role == 'superAdmin') && (
               <Button
                 size={['sm', 'md']}
                 variant={'whitePrimary'}

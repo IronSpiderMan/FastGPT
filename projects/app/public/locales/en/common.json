@@ -63,7 +63,8 @@
       "Title": "nickname",
       "Intro": "introduction",
       "ProjectId": "project id",
-      "Field": "Field"
+      "Field": "Field",
+      "Graduation School": "Graduation School"
     },
     "All Assistants": "Digital Human"
   },

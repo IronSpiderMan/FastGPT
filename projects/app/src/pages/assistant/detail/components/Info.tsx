@@ -218,7 +218,7 @@ const AssistantInfo = () => {
           />
         </Flex>
         <Flex alignItems={'center'} mt={6}>
-          <Box flex={'0 0 80px'}>{t('assistant.edit.ProjectId')}:&nbsp;</Box>
+          <Box flex={'0 0 80px'}>{t('assistant.edit.Graduation School')}:&nbsp;</Box>
           <Input
             flex={1}
             bg={'myWhite.600'}

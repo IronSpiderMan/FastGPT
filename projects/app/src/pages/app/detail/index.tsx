@@ -56,6 +56,8 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
     [appId, router]
   );
 
+  console.log(userInfo?.team?.role !== TeamMemberRoleEnum.superAdmin);
+  console.log(feConfigs?.hide_app_flow);
   const tabList = useMemo(
     () => [
       {
@@ -63,7 +65,17 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
         id: TabEnum.simpleEdit,
         icon: 'common/overviewLight'
       },
-      // ...(feConfigs?.hide_app_flow && userInfo?.team?.role !== TeamMemberRoleEnum.superAdmin
+      // 只有superAdmin才能看到编排模式
+      ...(userInfo?.team?.role !== TeamMemberRoleEnum.superAdmin
+        ? []
+        : [
+            {
+              label: t('core.app.navbar.Flow mode'),
+              id: TabEnum.adEdit,
+              icon: 'core/modules/flowLight'
+            }
+          ]),
+      // ...(feConfigs?.hide_app_flow || userInfo?.team?.role !== TeamMemberRoleEnum.superAdmin
       //   ? []
       //   : [
       //       {

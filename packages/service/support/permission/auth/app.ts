@@ -35,7 +35,9 @@ export async function authApp({
 
     const isOwner =
       role !== TeamMemberRoleEnum.visitor &&
-      (String(app.tmbId) === tmbId || role === TeamMemberRoleEnum.owner);
+      (String(app.tmbId) === tmbId ||
+        role === TeamMemberRoleEnum.owner ||
+        role === TeamMemberRoleEnum.superAdmin);
     const canWrite =
       isOwner ||
       (app.permission === PermissionTypeEnum.public && role !== TeamMemberRoleEnum.visitor);

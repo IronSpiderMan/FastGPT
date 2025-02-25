@@ -63,7 +63,8 @@
       "Title": "称呼",
       "Intro": "简介",
       "ProjectId": "项目Id",
-      "Field": "领域"
+      "Field": "领域",
+      "Graduation School": "毕业学校"
     },
     "All Assistants": "数字人"
   },
