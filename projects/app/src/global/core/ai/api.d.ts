@@ -4,3 +4,7 @@ import type { OutLinkChatAuthProps } from '@fastgpt/global/support/permission/ch
 export type CreateQuestionGuideParams = OutLinkChatAuthProps & {
   messages: ChatMessageItemType[];
 };
+
+export type RefineContentParams = {
+  content: string;
+};

@@ -31,6 +31,7 @@ export type InsertOneDatasetDataProps = PushDatasetDataChunkProps & {
 
 export type UpdateDatasetDataProps = {
   id: string;
+  raw?: string; // 未处理的q数据
   q?: string; // embedding content
   a?: string; // bonus content
   indexes: (Omit<DatasetDataIndexItemType, 'dataId'> & {

@@ -26,6 +26,7 @@ import { useSystemStore } from '@/web/common/system/useSystemStore';
 import MyModal from '@/components/MyModal';
 import { Prompt_AgentQA } from '@/global/core/prompt/agent';
 import Preview from '../components/Preview';
+import { useUserStore } from '@/web/support/user/useUserStore';
 
 function DataProcess({
   showPreviewChunks = true,
@@ -59,16 +60,24 @@ function DataProcess({
     onOpen: onOpenCustomPrompt,
     onClose: onCloseCustomPrompt
   } = useDisclosure();
+  const { userInfo } = useUserStore();
 
   const trainingModeList = useMemo(() => {
     const list = Object.entries(TrainingTypeMap);
 
-    return list
-      .filter(([key, value]) => {
+    if (userInfo?.team?.role === 'superAdmin') {
+      return list.filter(([key, value]) => {
         if (feConfigs?.isPlus) return true;
         return value.isPlus;
-      })
-      .slice(0, 1);
+      });
+    } else {
+      return list
+        .filter(([key, value]) => {
+          if (feConfigs?.isPlus) return true;
+          return value.isPlus;
+        })
+        .slice(0, 1);
+    }
   }, [feConfigs?.isPlus]);
 
   useEffect(() => {
@@ -117,151 +126,156 @@ function DataProcess({
                 title: t('core.dataset.import.Auto process'),
                 desc: t('core.dataset.import.Auto process desc'),
                 value: ImportProcessWayEnum.auto
-              }
-              // {
-              //   title: t('core.dataset.import.Custom process'),
-              //   desc: t('core.dataset.import.Custom process desc'),
-              //   value: ImportProcessWayEnum.custom,
-              //   children: getValues('way') === ImportProcessWayEnum.custom && (
-              //     <Box mt={5}>
-              //       {showChunkInput && chunkSizeField && (
-              //         <Box>
-              //           <Flex alignItems={'center'}>
-              //             <Box>{t('core.dataset.import.Ideal chunk length')}</Box>
-              //             <MyTooltip
-              //               label={t('core.dataset.import.Ideal chunk length Tips')}
-              //               forceShow
-              //             >
-              //               <MyIcon
-              //                 name={'common/questionLight'}
-              //                 ml={1}
-              //                 w={'14px'}
-              //                 color={'myGray.500'}
-              //               />
-              //             </MyTooltip>
-              //           </Flex>
-              //           <Box
-              //             mt={1}
-              //             css={{
-              //               '& > span': {
-              //                 display: 'block'
-              //               }
-              //             }}
-              //           >
-              //             <MyTooltip
-              //               label={t('core.dataset.import.Chunk Range', {
-              //                 min: minChunkSize,
-              //                 max: maxChunkSize
-              //               })}
-              //             >
-              //               <NumberInput
-              //                 size={'sm'}
-              //                 step={100}
-              //                 min={minChunkSize}
-              //                 max={maxChunkSize}
-              //                 onChange={(e) => {
-              //                   setValue(chunkSizeField, +e);
-              //                 }}
-              //               >
-              //                 <NumberInputField
-              //                   min={minChunkSize}
-              //                   max={maxChunkSize}
-              //                   {...register(chunkSizeField, {
-              //                     min: minChunkSize,
-              //                     max: maxChunkSize,
-              //                     valueAsNumber: true
-              //                   })}
-              //                 />
-              //                 <NumberInputStepper>
-              //                   <NumberIncrementStepper />
-              //                   <NumberDecrementStepper />
-              //                 </NumberInputStepper>
-              //               </NumberInput>
-              //             </MyTooltip>
-              //           </Box>
-              //         </Box>
-              //       )}
-              //
-              //       <Box mt={3}>
-              //         <Box>
-              //           {t('core.dataset.import.Custom split char')}
-              //           <MyTooltip
-              //             label={t('core.dataset.import.Custom split char Tips')}
-              //             forceShow
-              //           >
-              //             <MyIcon
-              //               name={'common/questionLight'}
-              //               ml={1}
-              //               w={'14px'}
-              //               color={'myGray.500'}
-              //             />
-              //           </MyTooltip>
-              //         </Box>
-              //         <Box mt={1}>
-              //           <Input
-              //             size={'sm'}
-              //             bg={'myGray.50'}
-              //             defaultValue={''}
-              //             placeholder="\n;======;==SPLIT=="
-              //             {...register('customSplitChar')}
-              //           />
-              //         </Box>
-              //       </Box>
-              //
-              //       {showPromptInput && (
-              //         <Box mt={3}>
-              //           <Box>{t('core.dataset.collection.QA Prompt')}</Box>
-              //           <Box
-              //             position={'relative'}
-              //             py={2}
-              //             px={3}
-              //             bg={'myGray.50'}
-              //             fontSize={'xs'}
-              //             whiteSpace={'pre-wrap'}
-              //             border={'1px'}
-              //             borderColor={'borderColor.base'}
-              //             borderRadius={'md'}
-              //             maxH={'140px'}
-              //             overflow={'auto'}
-              //             _hover={{
-              //               '& .mask': {
-              //                 display: 'block'
-              //               }
-              //             }}
-              //           >
-              //             {getValues('qaPrompt')}
-              //
-              //             <Box
-              //               display={'none'}
-              //               className="mask"
-              //               position={'absolute'}
-              //               top={0}
-              //               right={0}
-              //               bottom={0}
-              //               left={0}
-              //               background={
-              //                 'linear-gradient(182deg, rgba(255, 255, 255, 0.00) 1.76%, #FFF 84.07%)'
-              //               }
-              //             >
-              //               <Button
-              //                 size="xs"
-              //                 variant={'whiteBase'}
-              //                 leftIcon={<MyIcon name={'edit'} w={'13px'} />}
-              //                 color={'black'}
-              //                 position={'absolute'}
-              //                 right={2}
-              //                 bottom={2}
-              //                 onClick={onOpenCustomPrompt}
-              //               >
-              //                 {t('core.dataset.import.Custom prompt')}
-              //               </Button>
-              //             </Box>
-              //           </Box>
-              //         </Box>
-              //       )}
-              //     </Box>
-              //   )
-              // }
+              },
+              // TODO 超级管理员可以有额外功能，考虑给博士开放此功能
+              ...(userInfo?.team.role === 'superAdmin'
+                ? [
+                    {
+                      title: t('core.dataset.import.Custom process'),
+                      desc: t('core.dataset.import.Custom process desc'),
+                      value: ImportProcessWayEnum.custom,
+                      children: getValues('way') === ImportProcessWayEnum.custom && (
+                        <Box mt={5}>
+                          {showChunkInput && chunkSizeField && (
+                            <Box>
+                              <Flex alignItems={'center'}>
+                                <Box>{t('core.dataset.import.Ideal chunk length')}</Box>
+                                <MyTooltip
+                                  label={t('core.dataset.import.Ideal chunk length Tips')}
+                                  forceShow
+                                >
+                                  <MyIcon
+                                    name={'common/questionLight'}
+                                    ml={1}
+                                    w={'14px'}
+                                    color={'myGray.500'}
+                                  />
+                                </MyTooltip>
+                              </Flex>
+                              <Box
+                                mt={1}
+                                css={{
+                                  '& > span': {
+                                    display: 'block'
+                                  }
+                                }}
+                              >
+                                <MyTooltip
+                                  label={t('core.dataset.import.Chunk Range', {
+                                    min: minChunkSize,
+                                    max: maxChunkSize
+                                  })}
+                                >
+                                  <NumberInput
+                                    size={'sm'}
+                                    step={100}
+                                    min={minChunkSize}
+                                    max={maxChunkSize}
+                                    onChange={(e) => {
+                                      setValue(chunkSizeField, +e);
+                                    }}
+                                  >
+                                    <NumberInputField
+                                      min={minChunkSize}
+                                      max={maxChunkSize}
+                                      {...register(chunkSizeField, {
+                                        min: minChunkSize,
+                                        max: maxChunkSize,
+                                        valueAsNumber: true
+                                      })}
+                                    />
+                                    <NumberInputStepper>
+                                      <NumberIncrementStepper />
+                                      <NumberDecrementStepper />
+                                    </NumberInputStepper>
+                                  </NumberInput>
+                                </MyTooltip>
+                              </Box>
+                            </Box>
+                          )}
+
+                          <Box mt={3}>
+                            <Box>
+                              {t('core.dataset.import.Custom split char')}
+                              <MyTooltip
+                                label={t('core.dataset.import.Custom split char Tips')}
+                                forceShow
+                              >
+                                <MyIcon
+                                  name={'common/questionLight'}
+                                  ml={1}
+                                  w={'14px'}
+                                  color={'myGray.500'}
+                                />
+                              </MyTooltip>
+                            </Box>
+                            <Box mt={1}>
+                              <Input
+                                size={'sm'}
+                                bg={'myGray.50'}
+                                defaultValue={''}
+                                placeholder="\n;======;==SPLIT=="
+                                {...register('customSplitChar')}
+                              />
+                            </Box>
+                          </Box>
+
+                          {showPromptInput && (
+                            <Box mt={3}>
+                              <Box>{t('core.dataset.collection.QA Prompt')}</Box>
+                              <Box
+                                position={'relative'}
+                                py={2}
+                                px={3}
+                                bg={'myGray.50'}
+                                fontSize={'xs'}
+                                whiteSpace={'pre-wrap'}
+                                border={'1px'}
+                                borderColor={'borderColor.base'}
+                                borderRadius={'md'}
+                                maxH={'140px'}
+                                overflow={'auto'}
+                                _hover={{
+                                  '& .mask': {
+                                    display: 'block'
+                                  }
+                                }}
+                              >
+                                {getValues('qaPrompt')}
+
+                                <Box
+                                  display={'none'}
+                                  className="mask"
+                                  position={'absolute'}
+                                  top={0}
+                                  right={0}
+                                  bottom={0}
+                                  left={0}
+                                  background={
+                                    'linear-gradient(182deg, rgba(255, 255, 255, 0.00) 1.76%, #FFF 84.07%)'
+                                  }
+                                >
+                                  <Button
+                                    size="xs"
+                                    variant={'whiteBase'}
+                                    leftIcon={<MyIcon name={'edit'} w={'13px'} />}
+                                    color={'black'}
+                                    position={'absolute'}
+                                    right={2}
+                                    bottom={2}
+                                    onClick={onOpenCustomPrompt}
+                                  >
+                                    {t('core.dataset.import.Custom prompt')}
+                                  </Button>
+                                </Box>
+                              </Box>
+                            </Box>
+                          )}
+                        </Box>
+                      )
+                    }
+                  ]
+                : [])
             ]}
             px={3}
             py={3}

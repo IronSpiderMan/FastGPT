@@ -60,6 +60,7 @@ export type PgSearchRawType = {
   score: number;
 };
 export type PushDatasetDataChunkProps = {
+  raw?: string; // 如果 raw 存在，则说明采用了内容总结
   q: string; // embedding content
   a?: string; // bonus content
   chunkIndex?: number;

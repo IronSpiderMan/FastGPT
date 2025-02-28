@@ -13,6 +13,7 @@ import { SubTypeEnum } from '../../../support/wallet/sub/constants';
 /* fastgpt main */
 export type FastGPTConfigFileType = {
   feConfigs: FastGPTFeConfigsType;
+  systemPrompts: SystemPromptsType;
   systemEnv: SystemEnvType;
   subPlans?: SubPlanType;
   llmModels: ChatModelItemType[];
@@ -63,6 +64,10 @@ export type SystemEnvType = {
   vectorMaxProcess: number;
   qaMaxProcess: number;
   pgHNSWEfSearch: number;
+};
+
+export type SystemPromptsType = {
+  refinePrompt: string;
 };
 
 // declare global {

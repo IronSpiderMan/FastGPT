@@ -9,7 +9,7 @@ import { withNextCors } from '@fastgpt/service/common/middle/cors';
 import { countPromptTokens } from '@fastgpt/global/common/string/tiktoken';
 import { getVectorModel } from '@fastgpt/service/core/ai/model';
 import { hasSameValue } from '@/service/core/dataset/data/utils';
-import { insertData2Dataset } from '@/service/core/dataset/data/controller';
+import { insertData2Dataset, insertRefineData } from '@/service/core/dataset/data/controller';
 import { authDatasetCollection } from '@fastgpt/service/support/permission/auth/dataset';
 import { getCollectionWithDataset } from '@fastgpt/service/core/dataset/controller';
 import { pushGenerateVectorUsage } from '@/service/support/wallet/usage/push';
@@ -20,7 +20,7 @@ import { checkDatasetLimit } from '@fastgpt/service/support/permission/teamLimit
 export default withNextCors(async function handler(req: NextApiRequest, res: NextApiResponse<any>) {
   try {
     await connectToDatabase();
-    const { collectionId, q, a, indexes } = req.body as InsertOneDatasetDataProps;
+    const { collectionId, q, a, indexes, raw } = req.body as InsertOneDatasetDataProps;
 
     if (!q) {
       return Promise.reject('q is required');
@@ -54,6 +54,7 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
     // format data
     const formatQ = simpleText(q);
     const formatA = simpleText(a);
+    const formatRaw = simpleText(raw);
     const formatIndexes = indexes?.map((item) => ({
       ...item,
       text: simpleText(item.text)
@@ -80,12 +81,17 @@ export default withNextCors(async function handler(req: NextApiRequest, res: Nex
       tmbId,
       datasetId,
       collectionId,
+      raw: formatRaw,
       q: formatQ,
       a: formatA,
       chunkIndex: 0,
       model: vectorModelData.model,
       indexes: formatIndexes
     });
+    // if (raw) {
+    //   // 如果 raw 不为空，说明是使用了 refine
+    //   await insertRefineData({ dataId: insertId, rawData: raw, refinedData: q });
+    // }
 
     pushGenerateVectorUsage({
       teamId,

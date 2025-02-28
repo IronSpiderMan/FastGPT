@@ -1,9 +1,12 @@
 {
   "systemEnv": {
-    "openapiPrefix": "fastgpt",
+    "openapiPrefix": "hku",
     "vectorMaxProcess": 15,
     "qaMaxProcess": 15,
     "pgHNSWEfSearch": 100
+  },
+  "systemPrompts": {
+    "refinePrompt": "剔除用户内容中的人名、邮箱等内容。对用户内容总结，删除具有时效性的内容和非通用知识的内容，返回总结后的结果。\nplease think step by step."
   },
   "llmModels": [
     {
@@ -16,7 +19,7 @@
       "charsPointsPrice": 0,
       "censor": false,
       "vision": false,
-      "datasetProcess": false,
+      "datasetProcess": true,
       "toolChoice": true,
       "functionCall": false,
       "customCQPrompt": "",

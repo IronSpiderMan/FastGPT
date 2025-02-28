@@ -27,15 +27,31 @@ const Preview = ({
     const oneSourceChunkLength = Math.max(4, Math.floor(50 / sources.length));
     return sources
       .map((source) =>
-        source.chunks.slice(0, oneSourceChunkLength).map((chunk, i) => ({
-          ...chunk,
-          index: i + 1,
-          sourceName: source.sourceName,
-          sourceIcon: source.icon
-        }))
+        source.chunks.slice(0, oneSourceChunkLength).map((chunk, i) => {
+          console.log(chunk);
+          return {
+            ...chunk,
+            index: i + 1,
+            sourceName: source.sourceName,
+            sourceIcon: source.icon
+          };
+        })
       )
       .flat();
   }, [sources]);
+  // const chunks = useMemo(() => {
+  //   const oneSourceChunkLength = Math.max(4, Math.floor(50 / sources.length));
+  //   return sources
+  //     .map((source) =>
+  //       source.chunks.slice(0, oneSourceChunkLength).map((chunk, i) => ({
+  //         ...chunk,
+  //         index: i + 1,
+  //         sourceName: source.sourceName,
+  //         sourceIcon: source.icon
+  //       }))
+  //     )
+  //     .flat();
+  // }, [sources]);
 
   return (
     <Box h={'100%'} display={['block', 'flex']} flexDirection={'column'} flex={'1 0 0'}>

@@ -6,6 +6,7 @@ export type CreateDatasetDataProps = {
   datasetId: string;
   collectionId: string;
   chunkIndex?: number;
+  raw?: string;
   q: string;
   a?: string;
   indexes?: Omit<DatasetDataIndexItemType, 'dataId'>[];
@@ -25,4 +26,11 @@ export type PatchIndexesProps = {
   index: Omit<DatasetDataIndexItemType, 'dataId'> & {
     dataId?: string;
   };
+};
+
+export type CreateDatasetRefinedDataProps = {
+  dataId: string;
+  rawData: string;
+  refinedData: string;
+  agentModel?: string;
 };

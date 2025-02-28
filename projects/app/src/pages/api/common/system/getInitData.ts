@@ -96,6 +96,7 @@ export async function initSystemConfig() {
       ...(dbConfig.feConfigs || {}),
       isPlus: !!FastGPTProUrl
     },
+    systemPrompts: fileRes.systemPrompts || {},
     systemEnv: {
       ...fileRes.systemEnv,
       ...(dbConfig.systemEnv || {})

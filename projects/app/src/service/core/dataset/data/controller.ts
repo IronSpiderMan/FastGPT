@@ -2,7 +2,8 @@ import { MongoDatasetData } from '@fastgpt/service/core/dataset/data/schema';
 import {
   CreateDatasetDataProps,
   PatchIndexesProps,
-  UpdateDatasetDataProps
+  UpdateDatasetDataProps,
+  CreateDatasetRefinedDataProps
 } from '@fastgpt/global/core/dataset/controller';
 import {
   insertDatasetDataVector,
@@ -35,6 +36,7 @@ import type {
 import { pushDataListToTrainingQueue } from '@fastgpt/service/core/dataset/training/controller';
 import { getVectorModel } from '@fastgpt/service/core/ai/model';
 import { mongoSessionRun } from '@fastgpt/service/common/mongo/sessionRun';
+import { MongoRefine } from '@fastgpt/service/core/dataset/refine/schema';
 
 export async function pushDataToTrainingQueue(
   props: {
@@ -61,6 +63,7 @@ export async function insertData2Dataset({
   tmbId,
   datasetId,
   collectionId,
+  raw = '',
   q,
   a = '',
   chunkIndex = 0,
@@ -70,7 +73,6 @@ export async function insertData2Dataset({
   model: string;
 }) {
   if (!q || !datasetId || !collectionId || !model) {
-    console.log(q, a, datasetId, collectionId, model);
     return Promise.reject('q, datasetId, collectionId, model is required');
   }
   if (String(teamId) === String(tmbId)) {
@@ -114,6 +116,7 @@ export async function insertData2Dataset({
     tmbId,
     datasetId,
     collectionId,
+    raw,
     q,
     a,
     fullTextToken: jiebaSplit({ text: qaStr }),
@@ -127,6 +130,21 @@ export async function insertData2Dataset({
   return {
     insertId: _id,
     tokens: result.reduce((acc, cur) => acc + cur.tokens, 0)
+  };
+}
+
+export async function insertRefineData({
+  dataId,
+  rawData,
+  refinedData
+}: CreateDatasetRefinedDataProps) {
+  const { _id } = await MongoRefine.create({
+    dataId,
+    rawData,
+    refinedData
+  });
+  return {
+    insertId: _id
   };
 }
 

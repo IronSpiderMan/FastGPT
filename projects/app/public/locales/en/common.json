@@ -581,6 +581,7 @@
         "Auxiliary Data Tip": "This section is divided into optional fields \n This content is usually designed to work with the previous data content to build structured prompt words for special scenarios",
         "Data Content": "Data Content",
         "Data Content Placeholder": "The input field is required, and the content is usually a description of the knowledge point, or it can be a user question, at most {{maxToken}} words.",
+        "Data Raw Content Placeholder": "The input field is optional, and the content is usually a unprocessed description of the knowledge point, or it can be a user question, at most {{maxToken}} words.",
         "Data Content Tip": "The input box is a required field \n The content is usually a description of the knowledge point, but also can be a user question.",
         "Default Index Tip": "Cannot be edited, the default index will use the text of [related data content] and [auxiliary data] to generate an index directly, if the default index is not needed, you can delete it. Each piece of data must have more than one index. After all indexes are deleted, a default index is automatically generated.",
         "Edit": "Edit Data",
@@ -592,7 +593,9 @@
         "data is deleted": "Data is deleted",
         "get data error": "Get data error",
         "id": "Data ID",
-        "unit": "pieces"
+        "unit": "pieces",
+        "Raw Data is Required": "Unprocessed data is required",
+        "Refine success": "Refine Success"
       },
       "embedding model tip": "The index model can transform the natural language into vectors for semantic retrieval. Note that different index models cannot be used together and cannot be modified after selecting the index model.",
       "error": {

@@ -1,4 +1,8 @@
-import { FastGPTFeConfigsType, SystemEnvType } from '@fastgpt/global/common/system/types';
+import {
+  FastGPTFeConfigsType,
+  SystemEnvType,
+  SystemPromptsType
+} from '@fastgpt/global/common/system/types';
 import {
   AudioSpeechModelType,
   ReRankModelItemType,
@@ -10,6 +14,7 @@ import { SubPlanType } from '@fastgpt/global/support/wallet/sub/type';
 
 declare global {
   var feConfigs: FastGPTFeConfigsType;
+  var systemPrompts: SystemPromptsType;
   var systemEnv: SystemEnvType;
   var subPlans: SubPlanType | undefined;
 

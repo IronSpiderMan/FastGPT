@@ -1,18 +1,17 @@
 import React, { useMemo, useState } from 'react';
-import { Box, Flex, Button, Textarea, useTheme, Grid } from '@chakra-ui/react';
-import { UseFormRegister, useFieldArray, useForm } from 'react-hook-form';
+import { Box, Button, Flex, Grid, Textarea, useTheme } from '@chakra-ui/react';
+import { useFieldArray, useForm } from 'react-hook-form';
 import {
-  postInsertData2Dataset,
-  putDatasetDataById,
   delOneDatasetDataById,
   getDatasetCollectionById,
-  getDatasetDataItemById
+  getDatasetDataItemById,
+  postInsertData2Dataset,
+  putDatasetDataById
 } from '@/web/core/dataset/api';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import MyIcon from '@fastgpt/web/components/common/Icon';
 import MyModal from '@/components/MyModal';
 import MyTooltip from '@/components/MyTooltip';
-import { QuestionOutlineIcon } from '@chakra-ui/icons';
 import { useQuery } from '@tanstack/react-query';
 import { useTranslation } from 'next-i18next';
 import { useRequest } from '@/web/common/hooks/useRequest';
@@ -27,10 +26,12 @@ import { getDocPath } from '@/web/common/system/doc';
 import RawSourceBox from '@/components/core/dataset/RawSourceBox';
 import MyBox from '@/components/common/MyBox';
 import { getErrText } from '@fastgpt/global/common/error/utils';
-import RowTabs from '@fastgpt/web/components/common/Tabs/RowTabs';
 import { useSystemStore } from '@/web/common/system/useSystemStore';
+import { EditModeEnum, InputTab } from '@/pages/dataset/detail/components/InputTab';
+import { postRefineContent } from '@/web/core/ai/api';
 
 export type InputDataType = {
+  raw: string;
   q: string;
   a: string;
   indexes: (Omit<DatasetDataIndexItemType, 'dataId'> & {
@@ -55,7 +56,7 @@ const InputDataModal = ({
 }: {
   collectionId: string;
   dataId?: string;
-  defaultValue?: { q: string; a?: string };
+  defaultValue?: { raw?: string; q: string; a?: string };
   onClose: () => void;
   onSuccess: (data: InputDataType & { dataId: string }) => void;
   onDelete?: () => void;
@@ -66,7 +67,7 @@ const InputDataModal = ({
   const [currentTab, setCurrentTab] = useState(TabEnum.content);
   const { vectorModelList } = useSystemStore();
 
-  const { register, handleSubmit, reset, control } = useForm<InputDataType>();
+  const { register, handleSubmit, reset, control, setValue, getValues } = useForm<InputDataType>();
   const {
     fields: indexes,
     append: appendIndexes,
@@ -110,12 +111,14 @@ const InputDataModal = ({
       onSuccess(res) {
         if (res) {
           reset({
+            raw: res.raw,
             q: res.q,
             a: res.a,
             indexes: res.indexes
           });
         } else if (defaultValue) {
           reset({
+            raw: defaultValue.raw,
             q: defaultValue.q,
             a: defaultValue.a
           });
@@ -154,6 +157,7 @@ const InputDataModal = ({
 
       const dataId = await postInsertData2Dataset({
         collectionId: collection._id,
+        raw: e.raw,
         q: e.q,
         a: e.a,
         // remove dataId
@@ -173,6 +177,7 @@ const InputDataModal = ({
     onSuccess(e) {
       reset({
         ...e,
+        raw: '',
         q: '',
         a: '',
         indexes: []
@@ -224,9 +229,27 @@ const InputDataModal = ({
     errorToast: t('common.error.unKnow')
   });
 
+  // 添加 isRefining 状态
+  const { mutate: handleRefine, isLoading: isRefining } = useRequest({
+    mutationFn: async () => {
+      const raw = getValues('raw');
+      if (!raw) {
+        return Promise.reject(); // 使用 Promise.reject 来避免后续的 successToast 和 onSuccess 被触发
+      } else {
+        return postRefineContent({ content: raw });
+      }
+    },
+    successToast: t('core.dataset.data.Refine Success'),
+    errorToast: t('core.dataset.data.Raw Data is Required'),
+    onSuccess(data) {
+      // 如果需要，可以更新表单的值
+      setValue('q', data);
+    }
+  });
+
   const isLoading = useMemo(
     () => isImporting || isUpdating || isFetchingData || isDeleting,
-    [isImporting, isUpdating, isFetchingData, isDeleting]
+    [isImporting, isUpdating, isFetchingData, isDeleting, isRefining]
   );
 
   return (
@@ -264,7 +287,14 @@ const InputDataModal = ({
             {currentTab === TabEnum.index && <> {t('dataset.data.Index Edit')}</>}
           </Box>
           <Box flex={1} px={5} overflow={'auto'}>
-            {currentTab === TabEnum.content && <InputTab maxToken={maxToken} register={register} />}
+            {currentTab === TabEnum.content && (
+              <InputTab
+                maxToken={maxToken}
+                register={register}
+                setValue={setValue}
+                mode={dataId ? EditModeEnum.edit : EditModeEnum.add}
+              />
+            )}
             {currentTab === TabEnum.index && (
               <Grid gridTemplateColumns={['1fr', '1fr 1fr']} gridGap={4}>
                 {indexes?.map((index, i) => (
@@ -341,20 +371,48 @@ const InputDataModal = ({
             )}
           </Box>
           {/* footer */}
-          <Flex justifyContent={'flex-end'} px={5} mt={4}>
-            <Button variant={'whiteBase'} mr={3} onClick={onClose}>
-              {t('common.Close')}
-            </Button>
-            <MyTooltip label={collection.canWrite ? '' : t('dataset.data.Can not edit')}>
-              <Button
-                isDisabled={!collection.canWrite}
-                // @ts-ignore
-                onClick={handleSubmit(dataId ? onUpdateData : sureImportData)}
-              >
-                {dataId ? t('common.Confirm Update') : t('common.Confirm Import')}
+          <Flex px={5} mt={4}>
+            <Flex justifyContent={'flex-start'} w={'50%'}>
+              <MyTooltip label={collection.canWrite ? '' : t('dataset.data.Can not edit')}>
+                <Button
+                  isDisabled={!collection.canWrite || !!dataId}
+                  onClick={handleRefine}
+                  isLoading={isRefining}
+                >
+                  总结内容
+                </Button>
+              </MyTooltip>
+            </Flex>
+            <Flex justifyContent={'flex-end'} w={'50%'}>
+              <Button variant={'whiteBase'} mr={3} onClick={onClose}>
+                {t('common.Close')}
               </Button>
-            </MyTooltip>
+              <MyTooltip label={collection.canWrite ? '' : t('dataset.data.Can not edit')}>
+                <Button
+                  isDisabled={!collection.canWrite || isRefining}
+                  // @ts-ignore
+                  onClick={handleSubmit(dataId ? onUpdateData : sureImportData)}
+                >
+                  {dataId ? t('common.Confirm Update') : t('common.Confirm Import')}
+                </Button>
+              </MyTooltip>
+            </Flex>
           </Flex>
+          {/*<Flex justifyContent={'flex-end'} px={5} mt={4}>*/}
+          {/*  <Button variant={'whiteBase'} mr={3} onClick={onClose}>*/}
+          {/*    {t('common.Close')}*/}
+          {/*  </Button>*/}
+          {/*  </Button>*/}
+          {/*  <MyTooltip label={collection.canWrite ? '' : t('dataset.data.Can not edit')}>*/}
+          {/*    <Button*/}
+          {/*      isDisabled={!collection.canWrite}*/}
+          {/*      // @ts-ignore*/}
+          {/*      onClick={handleSubmit(dataId ? onUpdateData : sureImportData)}*/}
+          {/*    >*/}
+          {/*      {dataId ? t('common.Confirm Update') : t('common.Confirm Import')}*/}
+          {/*    </Button>*/}
+          {/*  </MyTooltip>*/}
+          {/*</Flex>*/}
         </Flex>
       </MyBox>
       <ConfirmModal />
@@ -363,83 +421,3 @@ const InputDataModal = ({
 };
 
 export default React.memo(InputDataModal);
-
-enum InputTypeEnum {
-  q = 'q',
-  a = 'a'
-}
-const InputTab = ({
-  maxToken,
-  register
-}: {
-  maxToken: number;
-  register: UseFormRegister<InputDataType>;
-}) => {
-  const { t } = useTranslation();
-  const { isPc } = useSystemStore();
-  const [inputType, setInputType] = useState(InputTypeEnum.q);
-
-  return (
-    <Flex flexDirection={'column'} h={'100%'}>
-      <Box>
-        <RowTabs
-          list={[
-            {
-              label: (
-                <Flex alignItems={'center'}>
-                  <Box as="span" color={'red.600'}>
-                    *
-                  </Box>
-                  {t('core.dataset.data.Main Content')}
-                  <MyTooltip label={t('core.dataset.data.Data Content Tip')}>
-                    <QuestionOutlineIcon ml={1} />
-                  </MyTooltip>
-                </Flex>
-              ),
-              value: InputTypeEnum.q
-            },
-            {
-              label: (
-                <Flex alignItems={'center'}>
-                  {t('core.dataset.data.Auxiliary Data')}
-                  <MyTooltip label={t('core.dataset.data.Auxiliary Data Tip')}>
-                    <QuestionOutlineIcon ml={1} />
-                  </MyTooltip>
-                </Flex>
-              ),
-              value: InputTypeEnum.a
-            }
-          ]}
-          value={inputType}
-          onChange={(e) => setInputType(e as InputTypeEnum)}
-        />
-      </Box>
-
-      <Box mt={3} flex={'1 0 0'}>
-        {inputType === InputTypeEnum.q && (
-          <Textarea
-            placeholder={t('core.dataset.data.Data Content Placeholder', { maxToken })}
-            maxLength={maxToken}
-            h={'100%'}
-            bg={'myWhite.400'}
-            {...register(`q`, {
-              required: true
-            })}
-          />
-        )}
-        {inputType === InputTypeEnum.a && (
-          <Textarea
-            placeholder={t('core.dataset.data.Auxiliary Data Placeholder', {
-              maxToken: maxToken * 1.5
-            })}
-            h={'100%'}
-            bg={'myWhite.400'}
-            rows={isPc ? 24 : 12}
-            maxLength={maxToken * 1.5}
-            {...register('a')}
-          />
-        )}
-      </Box>
-    </Flex>
-  );
-};

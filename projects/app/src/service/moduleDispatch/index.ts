@@ -217,10 +217,7 @@ export async function dispatchModules({
       }
       return {};
     })();
-    console.log('dispatchRes', '=====================================================');
-    console.log(dispatchRes);
-    console.log('dispatchRes', '=====================================================');
-
+    // TODO 推理的中间过程，待处理
     // format response data. Add modulename and moduletype
     const formatResponseData = (() => {
       if (!dispatchRes[ModuleOutputKeyEnum.responseData]) return undefined;

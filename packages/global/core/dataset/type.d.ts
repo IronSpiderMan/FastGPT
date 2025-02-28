@@ -76,6 +76,7 @@ export type DatasetDataSchemaType = {
   collectionId: string;
   chunkIndex: number;
   updateTime: Date;
+  raw: string;
   q: string; // large chunks or question
   a: string; // answer or custom content
   fullTextToken: string;
@@ -100,6 +101,15 @@ export type DatasetTrainingSchemaType = {
   chunkIndex: number;
   weight: number;
   indexes: Omit<DatasetDataIndexItemType, 'dataId'>[];
+};
+
+export type DatasetDataRefineSchemaType = {
+  _id: string;
+  dataId: string;
+  rawData: string;
+  refinedData: string;
+  agentModel: string;
+  updateTime: Date;
 };
 
 export type CollectionWithDatasetType = Omit<DatasetCollectionSchemaType, 'datasetId'> & {
@@ -145,12 +155,17 @@ export type DatasetDataItemType = {
   collectionId: string;
   sourceName: string;
   sourceId?: string;
+  raw?: string;
   q: string;
   a: string;
   chunkIndex: number;
   indexes: DatasetDataIndexItemType[];
   isOwner: boolean;
   canWrite: boolean;
+};
+/* ================= data ===================== */
+export type DatasetDataRefineItemType = {
+  dataId: string;
 };
 
 /* --------------- file ---------------------- */
