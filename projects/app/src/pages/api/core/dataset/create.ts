@@ -17,6 +17,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       name,
       type = DatasetTypeEnum.dataset,
       avatar,
+      mode,
       vectorModel = global.vectorModels[0].model,
       agentModel = getDatasetModel().model
     } = req.body as CreateDatasetParams;
@@ -41,6 +42,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
       vectorModel,
       agentModel,
       avatar,
+      mode,
       parentId: parentId || null,
       type
     });

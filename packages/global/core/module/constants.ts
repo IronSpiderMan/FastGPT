@@ -59,6 +59,9 @@ export enum ModuleInputKeyEnum {
   aiChatQuotePrompt = 'quotePrompt',
   aiChatDatasetQuote = 'quoteQA',
 
+  // qaMatch
+  qaMatchThreshold = 'qaMatchThreshold',
+
   // dataset
   datasetSelectList = 'datasets',
   datasetSimilarity = 'similarity',
@@ -105,6 +108,10 @@ export enum ModuleOutputKeyEnum {
   datasetIsEmpty = 'isEmpty',
   datasetUnEmpty = 'unEmpty',
   datasetQuoteQA = 'quoteQA',
+
+  // qaMatch
+  qaIsMatched = 'isMatched',
+  qaUnMatched = 'unMatched',
 
   // context extract
   contextExtractFields = 'fields',

@@ -44,6 +44,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse<
         name: item.name,
         intro: item.intro,
         type: item.type,
+        mode: item.mode,
         permission: item.permission,
         canWrite,
         isOwner: String(item.tmbId) === tmbId || teamOwner,

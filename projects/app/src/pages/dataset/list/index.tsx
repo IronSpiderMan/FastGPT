@@ -48,6 +48,7 @@ import ParentPaths from '@/components/common/ParentPaths';
 import DatasetTypeTag from '@/components/core/dataset/DatasetTypeTag';
 import { useToast } from '@fastgpt/web/hooks/useToast';
 import { getErrText } from '@fastgpt/global/common/error/utils';
+import DatasetModeTag from '@/components/core/dataset/DatasetModeTag';
 
 const CreateModal = dynamic(() => import('./component/CreateModal'), { ssr: false });
 const MoveModal = dynamic(() => import('./component/MoveModal'), { ssr: false });
@@ -429,7 +430,8 @@ const Kb = () => {
                 <PermissionIconText permission={dataset.permission} color={'myGray.600'} />
               </Box>
               {dataset.type !== DatasetTypeEnum.folder && (
-                <DatasetTypeTag type={dataset.type} py={1} px={2} />
+                <DatasetModeTag mode={dataset.mode} py={1} px={2} />
+                // <DatasetTypeTag type={dataset.type} py={1} px={2} />
               )}
             </Flex>
           </Box>

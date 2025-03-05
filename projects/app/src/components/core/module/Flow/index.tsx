@@ -25,6 +25,8 @@ const nodeTypes: Record<`${FlowNodeTypeEnum}`, any> = {
     () => import('./components/nodes/NodeDatasetConcat')
   ),
   [FlowNodeTypeEnum.answerNode]: dynamic(() => import('./components/nodes/NodeAnswer')),
+  [FlowNodeTypeEnum.qaMatchNode]: dynamic(() => import('./components/nodes/NodeQaMatch')),
+  [FlowNodeTypeEnum.qaChatNode]: dynamic(() => import('./components/nodes/NodeQaChat')),
   [FlowNodeTypeEnum.classifyQuestion]: dynamic(() => import('./components/nodes/NodeCQNode')),
   [FlowNodeTypeEnum.contentExtract]: dynamic(() => import('./components/nodes/NodeExtract')),
   [FlowNodeTypeEnum.httpRequest468]: dynamic(() => import('./components/nodes/NodeHttp')),

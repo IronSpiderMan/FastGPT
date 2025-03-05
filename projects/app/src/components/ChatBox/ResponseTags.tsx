@@ -50,9 +50,17 @@ const ResponseTags = ({
     historyPreview = [],
     runningTime = 0
   } = useMemo(() => {
-    const chatData = responseData.find((item) => item.moduleType === FlowNodeTypeEnum.chatNode);
+    const chatData = responseData.find(
+      (item) =>
+        item.moduleType === FlowNodeTypeEnum.chatNode ||
+        item.moduleType === FlowNodeTypeEnum.qaChatNode
+    );
     const quoteList = responseData
-      .filter((item) => item.moduleType === FlowNodeTypeEnum.chatNode)
+      .filter(
+        (item) =>
+          item.moduleType === FlowNodeTypeEnum.chatNode ||
+          item.moduleType === FlowNodeTypeEnum.qaChatNode
+      )
       .map((item) => item.quoteList)
       .flat()
       .filter(Boolean) as SearchDataResponseItemType[];

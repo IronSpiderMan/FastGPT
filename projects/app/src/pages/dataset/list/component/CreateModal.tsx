@@ -1,5 +1,5 @@
 import React, { useCallback, useState } from 'react';
-import { Box, Flex, Button, ModalFooter, ModalBody, Input } from '@chakra-ui/react';
+import { Box, Button, Flex, Input, ModalBody, ModalFooter } from '@chakra-ui/react';
 import { useSelectFile } from '@/web/common/file/hooks/useSelectFile';
 import { useForm } from 'react-hook-form';
 import { compressImgFileAndUpload } from '@/web/common/file/controller';
@@ -19,6 +19,7 @@ import MyRadio from '@/components/common/MyRadio';
 import { DatasetTypeEnum } from '@fastgpt/global/core/dataset/constants';
 import { MongoImageTypeEnum } from '@fastgpt/global/common/file/image/constants';
 import { QuestionOutlineIcon } from '@chakra-ui/icons';
+import { DatasetModeEnum, DatasetModeMap } from '@fastgpt/global/support/permission/constant';
 
 const CreateModal = ({ onClose, parentId }: { onClose: () => void; parentId?: string }) => {
   const { t } = useTranslation();
@@ -37,6 +38,7 @@ const CreateModal = ({ onClose, parentId }: { onClose: () => void; parentId?: st
       name: '',
       intro: '',
       vectorModel: filterNotHiddenVectorModelList[0].model,
+      mode: DatasetModeEnum.vague,
       agentModel: datasetModelList.length ? datasetModelList[0].model : 'gpt-3.5-turbo-16k'
     }
   });
@@ -153,6 +155,28 @@ const CreateModal = ({ onClose, parentId }: { onClose: () => void; parentId?: st
             />
           </Flex>
         </Box>
+        <Flex mt={6} alignItems={'center'}>
+          <Flex alignItems={'center'} flex={'0 0 100px'}>
+            {t('core.ai.model.Dataset Mode')}
+            <MyTooltip label={t('core.dataset.dataset mode tip')}>
+              <QuestionOutlineIcon ml={1} />
+            </MyTooltip>
+          </Flex>
+          <Box flex={1}>
+            <MySelect
+              w={'100%'}
+              value={getValues('mode')}
+              list={Object.keys(DatasetModeEnum).map((key) => ({
+                label: t(DatasetModeMap[key as DatasetModeEnum].label),
+                value: DatasetModeEnum[key as keyof typeof DatasetModeEnum]
+              }))}
+              onchange={(e) => {
+                setValue('mode', e);
+                setRefresh((state) => !state);
+              }}
+            />
+          </Box>
+        </Flex>
         {filterNotHiddenVectorModelList.length > 1 && (
           <Flex mt={6} alignItems={'center'}>
             <Flex alignItems={'center'} flex={'0 0 100px'}>

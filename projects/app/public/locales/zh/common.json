@@ -261,7 +261,8 @@
       "Prompt": "提示词",
       "model": {
         "Dataset Agent Model": "文件处理模型",
-        "Vector Model": "索引模型"
+        "Vector Model": "索引模型",
+        "Dataset Mode": "知识库模式"
       }
     },
     "app": {
@@ -601,6 +602,7 @@
         "Refine Success": "总结完成"
       },
       "embedding model tip": "索引模型可以将自然语言转成向量，用于进行语义检索。\n注意，不同索引模型无法一起使用，选择完索引模型后将无法修改。",
+      "dataset mode tip": "精准模式时，知识库会直接返回答案。模糊模式时，知识库会利用大语言模型总结答案。",
       "error": {
         "Data not found": "数据不存在或已被删除",
         "Start Sync Failed": "开始同步失败",
@@ -990,6 +992,10 @@
     }
   },
   "dataset": {
+    "Mode": {
+      "Accurate Mode": "精准模式",
+      "Vague Mode": "模糊模式"
+    },
     "Confirm move the folder": "确认移动到该目录",
     "Confirm to delete the data": "确认删除该数据？",
     "Confirm to delete the file": "确认删除该文件及其所有数据？",

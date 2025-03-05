@@ -415,22 +415,22 @@ const CollectionCard = () => {
                       ),
                       onClick: () => setEditFolderData({})
                     },
-                    // {
-                    //   label: (
-                    //     <Flex>
-                    //       <MyIcon name={'core/dataset/manualCollection'} mr={2} w={'20px'} />
-                    //       {t('core.dataset.Manual collection')}
-                    //     </Flex>
-                    //   ),
-                    //   onClick: () => {
-                    //     onOpenCreateVirtualFileModal({
-                    //       defaultVal: '',
-                    //       onSuccess: (name) => {
-                    //         onCreateCollection({ name, type: DatasetCollectionTypeEnum.virtual });
-                    //       }
-                    //     });
-                    //   }
-                    // },
+                    {
+                      label: (
+                        <Flex>
+                          <MyIcon name={'core/dataset/manualCollection'} mr={2} w={'20px'} />
+                          {t('core.dataset.Manual collection')}
+                        </Flex>
+                      ),
+                      onClick: () => {
+                        onOpenCreateVirtualFileModal({
+                          defaultVal: '',
+                          onSuccess: (name) => {
+                            onCreateCollection({ name, type: DatasetCollectionTypeEnum.virtual });
+                          }
+                        });
+                      }
+                    },
                     {
                       label: (
                         <Flex>
@@ -439,6 +439,22 @@ const CollectionCard = () => {
                         </Flex>
                       ),
                       onClick: onOpenFileSourceSelector
+                    },
+                    {
+                      label: (
+                        <Flex>
+                          <MyIcon name={'core/dataset/tableCollection'} mr={2} w={'20px'} />
+                          {t('core.dataset.Table collection')}
+                        </Flex>
+                      ),
+                      onClick: () =>
+                        router.replace({
+                          query: {
+                            ...router.query,
+                            currentTab: TabEnum.import,
+                            source: ImportDataSourceEnum.tableLocal
+                          }
+                        })
                     }
                     // {
                     //   label: (

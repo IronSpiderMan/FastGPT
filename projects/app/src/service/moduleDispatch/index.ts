@@ -29,12 +29,16 @@ import { dispatchPluginInput } from './plugin/runInput';
 import { dispatchPluginOutput } from './plugin/runOutput';
 import { valueTypeFormat } from './utils';
 import { ChatModuleUsageType } from '@fastgpt/global/support/wallet/bill/type';
+import { dispatchQaMatch } from '@/service/moduleDispatch/dataset/qaMatch';
+import { dispatchQaChat } from '@/service/moduleDispatch/chat/qaChat';
 
 const callbackMap: Record<`${FlowNodeTypeEnum}`, Function> = {
   [FlowNodeTypeEnum.historyNode]: dispatchHistory,
   [FlowNodeTypeEnum.questionInput]: dispatchChatInput,
   [FlowNodeTypeEnum.answerNode]: dispatchAnswer,
   [FlowNodeTypeEnum.chatNode]: dispatchChatCompletion,
+  [FlowNodeTypeEnum.qaChatNode]: dispatchQaChat,
+  [FlowNodeTypeEnum.qaMatchNode]: dispatchQaMatch,
   [FlowNodeTypeEnum.datasetSearchNode]: dispatchDatasetSearch,
   [FlowNodeTypeEnum.datasetConcatNode]: dispatchDatasetConcat,
   [FlowNodeTypeEnum.classifyQuestion]: dispatchClassifyQuestion,
@@ -250,10 +254,6 @@ export async function dispatchModules({
   }
   // start process width initInput
   const initModules = runningModules.filter((item) => initRunningModuleType[item.flowType]);
-
-  // runningModules.forEach((item) => {
-  //   console.log(item);
-  // });
 
   initModules.map((module) =>
     moduleInput(module, {

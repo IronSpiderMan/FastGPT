@@ -56,8 +56,6 @@ const AppDetail = ({ currentTab }: { currentTab: `${TabEnum}` }) => {
     [appId, router]
   );
 
-  console.log(userInfo?.team?.role !== TeamMemberRoleEnum.superAdmin);
-  console.log(feConfigs?.hide_app_flow);
   const tabList = useMemo(
     () => [
       {

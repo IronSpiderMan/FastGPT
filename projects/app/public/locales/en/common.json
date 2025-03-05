@@ -260,7 +260,8 @@
       "Prompt": "Prompt",
       "model": {
         "Dataset Agent Model": "Agent Model",
-        "Vector Model": "Vector Model"
+        "Vector Model": "Vector Model",
+        "Dataset Mode": "Dataset Mode"
       }
     },
     "app": {
@@ -598,6 +599,7 @@
         "Refine success": "Refine Success"
       },
       "embedding model tip": "The index model can transform the natural language into vectors for semantic retrieval. Note that different index models cannot be used together and cannot be modified after selecting the index model.",
+      "dataset mode tip": "In precise mode, the knowledge base directly returns the answer. In vague mode, the knowledge base uses a large language model to summarize the answer.",
       "error": {
         "Data not found": "The data does not exist or has been deleted",
         "Start Sync Failed": "Start Sync Failed",
@@ -987,6 +989,10 @@
     }
   },
   "dataset": {
+    "Mode": {
+      "Accurate Mode": "Accurate Mode",
+      "Vague Mode": "Vague Mode"
+    },
     "Confirm move the folder": "Confirm Move",
     "Confirm to delete the data": "Confirm to delete the data?",
     "Confirm to delete the file": "Are you sure to delete the file and all its data?",

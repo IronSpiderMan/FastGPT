@@ -6,7 +6,7 @@
     "pgHNSWEfSearch": 100
   },
   "systemPrompts": {
-    "refinePrompt": "剔除用户内容中的人名、邮箱等内容。对用户内容总结，删除具有时效性的内容和非通用知识的内容，返回总结后的结果。\nplease think step by step."
+    "refinePrompt": "剔除用户内容中的人名、邮箱等内容。对用户内容总结，删除具有时效性的内容和非通用知识的内容，返回总结后的结果。结果以: \n\n`问：xxx\n\n答：xxx`形式回复\n\nplease think step by step."
   },
   "llmModels": [
     {

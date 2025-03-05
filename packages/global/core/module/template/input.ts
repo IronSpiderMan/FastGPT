@@ -67,3 +67,14 @@ export const Input_Template_Dataset_Quote: FlowNodeInputItemType = {
   showTargetInApp: true,
   showTargetInPlugin: true
 };
+
+export const Input_Template_Threshold: FlowNodeInputItemType = {
+  key: ModuleInputKeyEnum.qaMatchThreshold,
+  type: FlowNodeInputTypeEnum.slider,
+  label: '问答相似的阈值',
+  valueType: ModuleIOValueTypeEnum.number,
+  max: 1,
+  min: 0,
+  step: 0.01,
+  value: 0.6
+};

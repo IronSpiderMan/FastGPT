@@ -14,12 +14,14 @@ import { PluginInputModule } from '@fastgpt/global/core/module/template/system/p
 import { PluginOutputModule } from '@fastgpt/global/core/module/template/system/pluginOutput';
 import { RunPluginModule } from '@fastgpt/global/core/module/template/system/runPlugin';
 import { AiQueryExtension } from '@fastgpt/global/core/module/template/system/queryExtension';
+import { QaMatchModule } from '@fastgpt/global/core/module/template/system/qaMatch';
 
 import type {
   FlowModuleTemplateType,
   moduleTemplateListType
 } from '@fastgpt/global/core/module/type.d';
 import { ModuleTemplateTypeEnum } from '@fastgpt/global/core/module/constants';
+import { QaChatModule } from '@fastgpt/global/core/module/template/system/qaAnswer';
 
 export const appSystemModuleTemplates: FlowModuleTemplateType[] = [
   UserGuideModule,
@@ -32,7 +34,9 @@ export const appSystemModuleTemplates: FlowModuleTemplateType[] = [
   ClassifyQuestionModule,
   ContextExtractModule,
   HttpModule468,
-  AiQueryExtension
+  AiQueryExtension,
+  QaMatchModule,
+  QaChatModule
 ];
 export const pluginSystemModuleTemplates: FlowModuleTemplateType[] = [
   PluginInputModule,
@@ -45,7 +49,9 @@ export const pluginSystemModuleTemplates: FlowModuleTemplateType[] = [
   ClassifyQuestionModule,
   ContextExtractModule,
   HttpModule468,
-  AiQueryExtension
+  AiQueryExtension,
+  QaMatchModule,
+  QaChatModule
 ];
 
 export const moduleTemplatesFlat: FlowModuleTemplateType[] = [
@@ -63,7 +69,9 @@ export const moduleTemplatesFlat: FlowModuleTemplateType[] = [
   PluginInputModule,
   PluginOutputModule,
   RunPluginModule,
-  AiQueryExtension
+  AiQueryExtension,
+  QaMatchModule,
+  QaChatModule
 ];
 
 export const moduleTemplatesList: moduleTemplateListType = [

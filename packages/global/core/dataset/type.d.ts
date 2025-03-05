@@ -1,5 +1,5 @@
 import type { LLMModelItemType, VectorModelItemType } from '../../core/ai/model.d';
-import { PermissionTypeEnum } from '../../support/permission/constant';
+import { DatasetModeEnum, PermissionTypeEnum } from '../../support/permission/constant';
 import { PushDatasetDataChunkProps } from './api';
 import {
   DatasetCollectionTypeEnum,
@@ -24,6 +24,7 @@ export type DatasetSchemaType = {
   intro: string;
   type: `${DatasetTypeEnum}`;
   status: `${DatasetStatusEnum}`;
+  mode: `${DatasetModeEnum}`;
   permission: `${PermissionTypeEnum}`;
   websiteConfig?: {
     url: string;
@@ -129,6 +130,7 @@ export type DatasetListItemType = {
   type: `${DatasetTypeEnum}`;
   isOwner: boolean;
   canWrite: boolean;
+  mode: `${DatasetModeEnum}`;
   permission: `${PermissionTypeEnum}`;
   vectorModel: VectorModelItemType;
 };

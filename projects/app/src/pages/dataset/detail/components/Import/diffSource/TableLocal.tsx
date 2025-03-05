@@ -40,6 +40,9 @@ const csvTemplate = `index,content
 "必填内容","可选内容。CSV 中请注意内容不能包含双引号，双引号是列分割符号"
 "结合人工智能的演进历程,AIGC的发展大致可以分为三个阶段，即:早期萌芽阶段(20世纪50年代至90年代中期)、沉淀积累阶段(20世纪90年代中期至21世纪10年代中期),以及快速发展展阶段(21世纪10年代中期至今)。",""
 "AIGC发展分为几个阶段？","早期萌芽阶段(20世纪50年代至90年代中期)、沉淀积累阶段(20世纪90年代中期至21世纪10年代中期)、快速发展展阶段(21世纪10年代中期至今)"`;
+const qaCsvTemplate = `q,a
+"问题","回答"
+`;
 
 const SelectFile = React.memo(function SelectFile({ goToNext }: { goToNext: () => void }) {
   const { t } = useTranslation();

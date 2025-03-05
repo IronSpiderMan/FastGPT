@@ -11,7 +11,12 @@ import {
   TeamCollectionName,
   TeamMemberCollectionName
 } from '@fastgpt/global/support/user/team/constant';
-import { PermissionTypeEnum, PermissionTypeMap } from '@fastgpt/global/support/permission/constant';
+import {
+  DatasetModeEnum,
+  DatasetModeMap,
+  PermissionTypeEnum,
+  PermissionTypeMap
+} from '@fastgpt/global/support/permission/constant';
 
 export const DatasetCollectionName = 'datasets';
 
@@ -72,6 +77,12 @@ const DatasetSchema = new Schema({
   intro: {
     type: String,
     default: ''
+  },
+  // 知识库的查找模式，如果是 accurate，则直接返回答案
+  mode: {
+    type: String,
+    enum: Object.keys(DatasetModeMap),
+    default: DatasetModeEnum.vague
   },
   permission: {
     type: String,

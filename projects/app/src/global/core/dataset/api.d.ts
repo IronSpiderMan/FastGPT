@@ -9,6 +9,7 @@ import {
   SearchDataResponseItemType
 } from '@fastgpt/global/core/dataset/type';
 import { ModuleInputKeyEnum } from '@fastgpt/global/core/module/constants';
+import { DatasetModeEnum } from '@fastgpt/global/support/permission/constant';
 
 /* ================= dataset ===================== */
 export type CreateDatasetParams = {
@@ -19,7 +20,7 @@ export type CreateDatasetParams = {
   avatar: string;
   vectorModel?: string;
   agentModel?: string;
-  type: `${DatasetTypeEnum}`;
+  mode?: `${DatasetModeEnum}`;
 };
 
 /* ================= collection ===================== */

@@ -189,7 +189,6 @@ export const FlowProvider = ({
       const targetType = nodes
         .find((node) => node.id === connect.target)
         ?.data?.inputs.find((input) => input.key === connect.targetHandle)?.valueType;
-      console.log(source, targetType);
       if (!sourceType || !targetType) {
         return toast({
           status: 'warning',

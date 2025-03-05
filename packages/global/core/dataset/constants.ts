@@ -1,4 +1,6 @@
 /* ------------ dataset -------------- */
+import { DatasetModeEnum } from '../../support/permission/constant';
+
 export enum DatasetTypeEnum {
   folder = 'folder',
   dataset = 'dataset',
@@ -19,6 +21,18 @@ export const DatasetTypeMap = {
     icon: 'core/dataset/websiteDataset',
     label: 'core.dataset.Website Dataset',
     collectionLabel: 'common.Website'
+  }
+};
+export const DatasetModeMap = {
+  [DatasetModeEnum.vague]: {
+    icon: 'core/dataset/vagueMode',
+    label: 'dataset.Mode.Vague Mode',
+    collectionLabel: 'common.Website'
+  },
+  [DatasetModeEnum.accurate]: {
+    icon: 'core/dataset/accurateMode',
+    label: 'dataset.Mode.Accurate Mode',
+    collectionLabel: 'common.File'
   }
 };
 
